@@ -82,21 +82,63 @@ jobs:
           TOKEN: ${{ forgejo.token }}
         run: |
           set -euo pipefail
-          [[ "$API" == https://* && "$SHA" =~ ^[0-9a-f]{40}$ ]] || exit 1
-          base="$API/repos/$REPOSITORY"
+          id=''
+          trap 'echo "Publication failed at line $LINENO; draft release ID: ${id:-not created}. Earlier draft 2894 is unrelated and has not been modified." >&2' ERR
+          [[ "$API" == https://* ]] || { echo 'Invalid Forgejo API URL: HTTPS required' >&2; exit 1; }
+          [[ "$SHA" =~ ^[0-9a-f]{40}$ ]] || { echo 'Invalid commit SHA: expected 40 lowercase hexadecimal characters' >&2; exit 1; }
+          [[ "$REPOSITORY" =~ ^[A-Za-z0-9_.-]+/[A-Za-z0-9_.-]+$ ]] || { echo 'Invalid repository owner/name' >&2; exit 1; }
+          [ -n "$TOKEN" ] || { echo 'Forgejo workflow token is missing' >&2; exit 1; }
+          base="${API%/}/repos/$REPOSITORY"
           tag="build-${SHA:0:12}"
           auth=(-H "Authorization: token $TOKEN")
-          api() { curl --fail-with-body --silent --show-error "${auth[@]}" "$@"; }
+          request() {
+            local method=GET arg url='' response status
+            local previous=''
+            for arg in "$@"; do
+              [ "$previous" != '-X' ] || method="$arg"
+              case "$arg" in https://*) url="$arg" ;; esac
+              previous="$arg"
+            done
+            echo "API $method ${url#"$API"} (draft ID: ${id:-not created})" >&2
+            response=$(mktemp)
+            if ! status=$(curl --silent --show-error "${auth[@]}" -o "$response" -w '%{http_code}' "$@"); then
+              rm -f "$response"
+              echo 'API transport failure; no HTTP response' >&2
+              return 1
+            fi
+            echo "HTTP $status" >&2
+            if [[ ! "$status" =~ ^2[0-9][0-9]$ ]]; then
+              # Redact the actual token and escape control characters before logging.
+              jq -Rs --arg token "$TOKEN" 'split($token) | join("[REDACTED]") | .[0:4096]' "$response" >&2
+            fi
+            cat "$response"
+            rm -f "$response"
+            [[ "$status" =~ ^2[0-9][0-9]$ ]]
+          }
+          api() { request "$@"; }
           # Authentication/read check; write capabilities are checked by each API operation.
           api "$base" >/dev/null
-          api "$base/branches/main" | jq -e '.protected == true' >/dev/null
+          api "$base/branches/main" > branch.json
+          if ! jq -e '.protected == true' branch.json >/dev/null; then
+            echo 'WARNING: main is not reported as protected. Restrict main pushes to trusted contributors. Release publication will continue.' >&2
+          fi
+          echo "API GET /repos/$REPOSITORY/releases/tags/$tag (before draft creation)" >&2
           status=$(curl --silent --show-error "${auth[@]}" -o existing.json -w '%{http_code}' "$base/releases/tags/$tag")
+          echo "HTTP $status" >&2
+          if [ "$status" != 200 ] && [ "$status" != 404 ]; then
+            jq -Rs --arg token "$TOKEN" 'split($token) | join("[REDACTED]") | .[0:4096]' existing.json >&2
+          fi
           if [ "$status" = 200 ]; then
             echo "Release $tag already exists; refusing to replace any assets. Inspect its commit and assets before rerunning." >&2
             exit 1
           fi
           [ "$status" = 404 ] || { echo "Release lookup failed: HTTP $status" >&2; exit 1; }
+          echo "API GET /repos/$REPOSITORY/tags/$tag (before draft creation)" >&2
           status=$(curl --silent --show-error "${auth[@]}" -o existing-tag.json -w '%{http_code}' "$base/tags/$tag")
+          echo "HTTP $status" >&2
+          if [ "$status" != 200 ] && [ "$status" != 404 ]; then
+            jq -Rs --arg token "$TOKEN" 'split($token) | join("[REDACTED]") | .[0:4096]' existing-tag.json >&2
+          fi
           if [ "$status" = 200 ]; then
             [ "$(jq -r .commit.sha existing-tag.json)" = "$SHA" ] || { echo 'Tag collision: commit differs' >&2; exit 1; }
           elif [ "$status" != 404 ]; then
@@ -109,10 +151,14 @@ jobs:
           payload=$(jq -n --arg tag "$tag" --arg sha "$SHA" --arg title "Development Build ${SHA:0:12}" --arg body "$body" '{tag_name:$tag,target_commitish:$sha,name:$title,body:$body,draft:true,prerelease:true}')
           api -X POST -H 'Content-Type: application/json' --data "$payload" "$base/releases" > release.json
           id=$(jq -er .id release.json)
-          trap 'echo "Publication failed: draft release ID $id ($tag) may contain partial assets; inspect it before retrying." >&2' ERR
-          api "$base/tags/$tag" | jq -e --arg sha "$SHA" '.commit.sha == $sha' >/dev/null
+          trap 'echo "Publication failed: draft release ID $id ($tag) may contain partial assets; inspect it before retrying. No existing assets were replaced." >&2' ERR
+          api "$base/tags/$tag" | jq -e --arg sha "$SHA" '.commit.sha == $sha' >/dev/null || { echo "Tag $tag does not resolve to expected commit $SHA; draft $id requires inspection" >&2; exit 1; }
           for file in dist/*.jar dist/*.jar.asc dist/SHA256SUMS dist/SHA256SUMS.asc; do
             api -X POST -F "attachment=@$file" "$base/releases/$id/assets" >/dev/null
           done
-          api "$base/releases/$id/assets" | jq -e --argjson count "$(find dist -maxdepth 1 -type f | wc -l)" 'length == $count' >/dev/null
+          api "$base/releases/$id/assets" > assets.json
+          expected=$(find dist -maxdepth 1 -type f -printf '%f\n' | sort)
+          actual=$(jq -r '.[].name' assets.json | sort)
+          [ "$expected" = "$actual" ] || { echo "Asset inventory mismatch; draft $id has not been published" >&2; exit 1; }
           api -X PATCH -H 'Content-Type: application/json' --data '{"draft":false,"prerelease":true}' "$base/releases/$id" >/dev/null
+          api "$base/releases/$id" | jq -e '.draft == false and .prerelease == true' >/dev/null || { echo "Final release state verification failed for ID $id" >&2; exit 1; }
