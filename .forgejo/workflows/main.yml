@@ -1,0 +1,35 @@
+name: Build DropsOverhaul
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+    branches: [main]
+
+jobs:
+  build:
+    runs-on: docker
+    container:
+      image: node:24-bookworm
+
+    steps:
+      - name: Check out repository
+        uses: https://data.forgejo.org/actions/checkout@v6
+        with:
+          persist-credentials: false
+
+      - name: Set up JDK 21
+        uses: https://data.forgejo.org/actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: '21'
+
+      - name: Build plugin JAR
+        run: ./gradlew jar --no-daemon
+
+      - name: Upload plugin JAR
+        uses: https://data.forgejo.org/forgejo/upload-artifact@v4
+        with:
+          name: DropsOverhaul
+          path: build/libs/*.jar
+          if-no-files-found: error

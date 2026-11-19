@@ -1,0 +1,110 @@
+name: Signed development release
+on:
+  push:
+    branches: [main]
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    container:
+      image: node:24-bookworm
+    steps:
+      - uses: https://data.forgejo.org/actions/checkout@d23441a48e516b6c34aea4fa41551a30e30af803
+        with:
+          persist-credentials: false
+      - uses: https://data.forgejo.org/actions/setup-java@cf277c60eb25467037889841efdb72551f06f6c3
+        with:
+          distribution: temurin
+          java-version: '21'
+      - run: ./gradlew jar --no-daemon
+      - name: Collect plugin distributions
+        shell: bash
+        run: |
+          set -euo pipefail
+          mkdir -p dist
+          for file in build/libs/*.jar; do
+            case "$file" in *-sources.jar|*-javadoc.jar|*-tests.jar) continue ;; esac
+            [ -f "$file" ] || continue
+            jar tf "$file" | grep -qx plugin.yml
+            cp "$file" dist/
+          done
+          compgen -G 'dist/*.jar' >/dev/null
+      - uses: https://data.forgejo.org/actions/upload-artifact@ff15f0306b3f739f7b6fd43fb5d26cd321bd4de5
+        with:
+          name: plugin-jars
+          path: dist/*.jar
+          if-no-files-found: error
+
+  release:
+    needs: build
+    runs-on: ubuntu-latest
+    container:
+      image: node:24-bookworm
+    steps:
+      # No checkout or execution of repository build scripts in this job.
+      - name: Install signing and API tools
+        run: apt-get update && apt-get install -y --no-install-recommends gnupg curl jq
+      - uses: https://data.forgejo.org/actions/download-artifact@9bc31d5ccc31df68ecc42ccf4149144866c47d8a
+        with:
+          name: plugin-jars
+          path: dist
+      - name: Sign and verify distributions
+        shell: bash
+        env:
+          CI_KEY_B64: ${{ secrets.CI_KEY_B64 }}
+          CI_KEY_PASSPHRASE: ${{ secrets.CI_KEY_PASSPHRASE }}
+        run: |
+          set -euo pipefail
+          export GNUPGHOME=$(mktemp -d)
+          chmod 700 "$GNUPGHOME"
+          trap 'gpgconf --kill gpg-agent; rm -rf -- "$GNUPGHOME"' EXIT
+          printf '%s' "$CI_KEY_B64" | base64 --decode | gpg --batch --import
+          unset CI_KEY_B64
+          cd dist
+          shopt -s nullglob
+          jars=(*.jar)
+          [ "${#jars[@]}" -gt 0 ] || { echo 'No plugin JARs received' >&2; exit 1; }
+          sha256sum -- "${jars[@]}" > SHA256SUMS
+          for file in "${jars[@]}" SHA256SUMS; do
+            printf '%s\n' "$CI_KEY_PASSPHRASE" | gpg --batch --yes --pinentry-mode loopback --passphrase-fd 0 --armor --detach-sign -- "$file"
+            gpg --batch --verify "$file.asc" "$file"
+          done
+          sha256sum --check SHA256SUMS
+      - name: Publish verified development release
+        shell: bash
+        env:
+          API: ${{ forgejo.api_url }}
+          REPOSITORY: ${{ forgejo.repository }}
+          SHA: ${{ forgejo.sha }}
+          TOKEN: ${{ forgejo.token }}
+        run: |
+          set -euo pipefail
+          [[ "$API" == https://* && "$SHA" =~ ^[0-9a-f]{40}$ ]] || exit 1
+          base="$API/repos/$REPOSITORY"
+          tag="build-${SHA:0:12}"
+          auth=(-H "Authorization: token $TOKEN")
+          api() { curl --fail-with-body --silent --show-error "${auth[@]}" "$@"; }
+          # Authentication/read check; write capabilities are checked by each API operation.
+          api "$base" >/dev/null
+          status=$(curl --silent --show-error "${auth[@]}" -o existing.json -w '%{http_code}' "$base/releases/tags/$tag")
+          if [ "$status" = 200 ]; then
+            echo "Release $tag already exists; refusing to replace any assets. Inspect its commit and assets before rerunning." >&2
+            exit 1
+          fi
+          [ "$status" = 404 ] || { echo "Release lookup failed: HTTP $status" >&2; exit 1; }
+          status=$(curl --silent --show-error "${auth[@]}" -o existing-tag.json -w '%{http_code}' "$base/tags/$tag")
+          if [ "$status" = 200 ]; then
+            [ "$(jq -r .commit.sha existing-tag.json)" = "$SHA" ] || { echo 'Tag collision: commit differs' >&2; exit 1; }
+          elif [ "$status" != 404 ]; then
+            echo "Tag lookup failed: HTTP $status" >&2; exit 1
+          fi
+          body=$(printf 'Repository: %s\nCommit: %s\nBranch: main\nBuild system: Gradle\nJava: 21' "$REPOSITORY" "$SHA")
+          payload=$(jq -n --arg tag "$tag" --arg sha "$SHA" --arg title "Development Build ${SHA:0:12}" --arg body "$body" '{tag_name:$tag,target_commitish:$sha,name:$title,body:$body,draft:true,prerelease:true}')
+          api -X POST -H 'Content-Type: application/json' --data "$payload" "$base/releases" > release.json
+          id=$(jq -er .id release.json)
+          trap 'echo "Publication failed: draft release ID $id ($tag) may contain partial assets; inspect it before retrying." >&2' ERR
+          api "$base/tags/$tag" | jq -e --arg sha "$SHA" '.commit.sha == $sha' >/dev/null
+          for file in dist/*.jar dist/*.jar.asc dist/SHA256SUMS dist/SHA256SUMS.asc; do
+            api -X POST -F "attachment=@$file" "$base/releases/$id/assets" >/dev/null
+          done
+          api -X PATCH -H 'Content-Type: application/json' --data '{"draft":false,"prerelease":true}' "$base/releases/$id" >/dev/null
