@@ -45,6 +45,11 @@ The manual compatibility workflow installs real native servers. A separate manua
 matrix runs Tier 1 boundaries or all Tier 2 candidates sequentially, preserving
 per-target failure/blocker results. Neither promotes a compiled JAR into releases.
 The existing signed Paper release is retained with explicit artifact eligibility.
+The independent `build-distributions.yml` workflow compiles manifest recipes into
+individual CI downloads without booting servers or invoking the release workflow.
+Paper/Spigot consolidation has separate runtime evidence. Native Forge groups
+must have identical compiled payloads and use explicit version sets in loader
+metadata; compilation reports preserve exact validation limits.
 The restrictive license remains unchanged; public redistribution rights are not
 inferred from local implementation or testing.
 

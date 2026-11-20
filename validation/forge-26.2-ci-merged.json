@@ -1,0 +1,29 @@
+{
+  "target": "forge-26.2",
+  "artifact": "DropsOverhaul-forge-mc26.1-to-26.2-4.2.jar",
+  "sha256": "97e6a31fbf14526d21366d0b9ce0dc15c95f6fe31712ab569a91999da8aec0f4",
+  "platform": "forge",
+  "minecraft": "26.2",
+  "forgeBuild": "65.1.5",
+  "serverJava": 25,
+  "javaVersion": "openjdk version \"25.0.5\" 2026-10-20 LTS\nOpenJDK Runtime Environment Temurin-25.0.5+8 (build 25.0.5+8-LTS)\nOpenJDK 64-Bit Server VM Temurin-25.0.5+8 (build 25.0.5+8-LTS, mixed mode, sharing)",
+  "requiredServerJava": 25,
+  "networkTransport": "java-nio",
+  "validationMode": "startup-only",
+  "clientScriptSha256": "f109991daa651fbc8aea9ca03ee00dde5d5b42578c86352bc2bc9755389f5c56",
+  "runnerSha256": "a325496e780a2fd06123e2c1dda70f9276cf8fd934a07a60fabe4342ec711222",
+  "shutdownHelperSha256": "396a31d8e6eb947cc21618666c32292ce8654e96341d9baaab0c7de3dc9c644c",
+  "protocolHelperSha256": "679082392b1637fd2c46b8af0405528eb9beef401bd6afff8fe214fb5f4f9d58",
+  "testedAtUTC": "2026-11-20T21:59:39.147261+00:00",
+  "state": "startup-tested",
+  "compiled": true,
+  "startup": true,
+  "gameplay": false,
+  "serverVersionLines": [
+    "\u001b[m\u001b[32m[16:59:47] [Server thread/INFO] [minecraft/DedicatedServer]: Starting minecraft server version 26.2"
+  ],
+  "configurationProbe": true,
+  "gameplayBlocked": "Pinned Mineflayer 4.39.0 / minecraft-data 3.119.0 has no usable protocol data for Minecraft 26.2. Gameplay and vanilla-client connectivity remain unverified.",
+  "shutdownDurationSeconds": 0.953,
+  "serverExitCode": 0
+}

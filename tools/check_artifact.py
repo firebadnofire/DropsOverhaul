@@ -7,10 +7,10 @@ from zipfile import ZipFile
 from targets import ROOT, load
 
 
-def inspect(target_id):
+def inspect(target_id, artifact_path=None, *, minecraft_versions=None, forge_versions=None):
     manifest = load()
     target = next(t for t in manifest['artifacts'] if t['id'] == target_id)
-    path = ROOT / target['artifactDirectory'] / target['artifact'].format(version=manifest['projectVersion'])
+    path = artifact_path or ROOT / target['artifactDirectory'] / target['artifact'].format(version=manifest['projectVersion'])
     maximum = int(target.get('compilerJava', target['buildJava'])) + 44
     with ZipFile(path) as jar:
         names = jar.namelist()
@@ -45,10 +45,13 @@ def inspect(target_id):
             if metadata['mods'][0]['modId'] != target['expectedId'] or metadata['mods'][0]['version'] != manifest['projectVersion']:
                 raise ValueError('Wrong Forge mod identity/version')
             dependencies = {entry['modId']: entry for entry in metadata['dependencies'][target['expectedId']]}
-            if dependencies['minecraft']['versionRange'] != '[' + target['minecraft'] + ']':
+            minecraft_range = ','.join('[' + v + ']' for v in minecraft_versions) if minecraft_versions else '[' + target['minecraft'] + ']'
+            if dependencies['minecraft']['versionRange'] != minecraft_range:
                 raise ValueError('Forge metadata does not require the exact manifest Minecraft version')
             forge_range = ('[' + target['forgeBuild'] + ']' if target.get('exactForgeBuild') else
                            '[' + target['forgeBuild'] + ',' + str(int(target['forgeBuild'].split('.')[0]) + 1) + ')')
+            if forge_versions:
+                forge_range = ','.join('[' + v + ']' for v in forge_versions)
             if dependencies['forge']['versionRange'] != forge_range:
                 raise ValueError('Forge metadata does not match the manifest Forge build range')
     return {'target': target_id, 'state': 'compiled', 'compiled': True, 'artifact': path.name,
