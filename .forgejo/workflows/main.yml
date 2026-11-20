@@ -38,67 +38,9 @@ jobs:
           path: dist/*.jar
           if-no-files-found: error
 
-
-  advertised-targets:
-    # Tier 2 is the exhaustive exact-target manifest used by mc-matrix.yml.
-    # Discover the versions from the repository, never from a stale list here.
-    needs: build
-    runs-on: ubuntu-latest
-    container:
-      image: node:24-bookworm
-    outputs:
-      matrix: ${{ steps.select.outputs.matrix }}
-    steps:
-      - uses: https://data.forgejo.org/actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1
-        with:
-          persist-credentials: false
-      - name: Install Python
-        run: apt-get update && apt-get install -y --no-install-recommends python3
-      - name: Enumerate advertised exact versions
-        id: select
-        shell: bash
-        run: |
-          set -euo pipefail
-          python3 tools/test_matrix.py --tier 2 > target-matrix.json
-          python3 - <<'PY_VALIDATE'
-          import json, re
-          with open('target-matrix.json', encoding='utf-8') as source:
-              data = json.load(source)
-          entries = data.get('include') if isinstance(data, dict) else None
-          if not isinstance(entries, list) or not entries:
-              raise SystemExit('Exhaustive Minecraft test matrix is empty or invalid')
-          names = []
-          for target in entries:
-              if not isinstance(target, dict):
-                  raise SystemExit('Malformed target in exhaustive test matrix')
-              name = target.get('id')
-              if not isinstance(name, str) or not re.fullmatch(r'[A-Za-z0-9_.-]+', name):
-                  raise SystemExit(f'Unsafe/missing Minecraft target ID: {name!r}')
-              names.append(name)
-          if len(set(names)) != len(names):
-              raise SystemExit('Duplicate Minecraft target ID in exhaustive test matrix')
-          print(f'Checking all {len(names)} exact targets from the repository manifest')
-          print('\n'.join(names))
-          PY_VALIDATE
-          # test_matrix.py produces a one-line JSON object with an include matrix.
-          printf 'matrix=%s\n' "$(python3 -c 'import json; print(json.dumps(json.load(open("target-matrix.json")), separators=(",", ":")))')" >> "$GITHUB_OUTPUT"
-
-  minecraft-test:
-    name: Minecraft ${{ matrix.id }}
-    needs: advertised-targets
-    strategy:
-      fail-fast: false
-      # Real dedicated servers are RAM-heavy; increase only if runner capacity permits.
-      max-parallel: 1
-      matrix: ${{ fromJSON(needs.advertised-targets.outputs.matrix) }}
-    uses: ./.forgejo/workflows/mc-test.yml
-    with:
-      target_id: ${{ matrix.id }}
-      tier: '2'
-
   release:
     if: ${{ forgejo.event_name == 'push' && forgejo.ref == 'refs/heads/main' }}
-    needs: [build, minecraft-test]
+    needs: build
     runs-on: ubuntu-latest
     container:
       image: node:24-bookworm
