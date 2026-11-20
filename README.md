@@ -153,22 +153,27 @@ enables release eligibility. Regenerate the matrix with
 
 ### Release and licensing
 
-The separate **Compile Paper and Forge distributions** workflow builds all existing
-manifest recipes and provides each distinct JAR as an individually downloadable
-CI artifact. It starts no test servers and has no signing or publication steps.
-See [CI-DISTRIBUTIONS.md](CI-DISTRIBUTIONS.md) for the generated output list.
+The default **Signed development release** workflow builds all implemented manifest
+recipes on pushes to `main`, consolidates compatible versions, then signs and
+publishes every successfully compiled JAR. Pull requests and manual runs compile
+without signing or publication. See [CI-DISTRIBUTIONS.md](CI-DISTRIBUTIONS.md) for
+the generated output list. The same JARs remain individually downloadable as CI artifacts.
+
 Compatible Paper/Spigot targets share one runtime-tested Bukkit binary. Forge
 targets share a JAR only when their independently compiled payloads are identical;
-the merged metadata accepts explicit Minecraft versions and Forge build pins.
-Each download includes a validation report. Compilation does not establish runtime
-support, and filename range endpoints do not verify untested intermediate patches.
-The inventory download reports exact candidates without an implemented recipe.
+merged metadata accepts explicit Minecraft versions and Forge build pins.
+Failed groups do not prevent successful groups from being published. The release
+includes `DISTRIBUTIONS.json` listing unavailable groups and a validation report
+for each JAR. Compilation and signing do not establish runtime support, and
+filename range endpoints do not verify untested intermediate patches.
 
-The existing Paper development release, SHA-256 manifest, and detached GPG signing
-flow remain in place. Only targets explicitly marked `releaseEligible` enter
-`stageReleaseArtifacts`; compiling another target does not publish it. New targets
-remain ineligible. Signing credentials are confined to the existing trusted push
-release job, never the manual test or pull-request jobs.
+`versions.json` explicitly authorizes compiled consolidated development releases
+through `developmentReleasePolicy`. This does not change runtime validation states
+or the legacy `releaseEligible` flags used by the standalone Paper
+`stageReleaseArtifacts` task. No test servers start during ordinary builds.
+JARs, JSON reports, and `SHA256SUMS` receive verified detached GPG signatures.
+Signing secrets remain isolated in the trusted push-to-main release job, which
+checks out no repository source and executes no repository build scripts.
 
 The repository's restrictive [LICENSE](LICENSE.md) is unchanged. Local implementation
 and test outputs do not establish permission to publicly redistribute modified

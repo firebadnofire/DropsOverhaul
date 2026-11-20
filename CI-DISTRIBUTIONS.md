@@ -2,7 +2,7 @@
 
 Generated from `versions.json` with `python tools/distributions.py table`.
 
-Each row is one individually downloadable artifact from **Compile Paper and Forge distributions**. No server starts, signing, or releases occur in this workflow.
+Each row is one individually downloadable artifact from **Signed development release**. Pushes to main sign and publish successful consolidated builds; pull requests and manual runs compile only. No test servers start.
 
 Range filenames show target endpoints, not verification of every intermediate patch or every Paper/Spigot pairing. Exact runtime status remains in [SUPPORT.md](SUPPORT.md) and each artifact includes `validation.json` with its current SHA-256 and matching prior evidence.
 
@@ -35,4 +35,4 @@ The inventory artifact also lists advertised exact candidates with no implemente
 
 Shared Forge JARs are allowed only when every member recipe compiles and all non-loader-metadata payload entries match byte for byte. Their loader metadata declares exact Minecraft and Forge-build sets. A payload mismatch fails that group and requires separate JARs; other groups continue.
 
-The standalone Paper build and existing signed release workflow remain unchanged. CI consolidation affects downloadable build artifacts only.
+The standalone Paper build remains independently buildable. The default push-to-main release signs successful consolidated JARs, their validation reports, DISTRIBUTIONS.json, and SHA256SUMS. Missing groups are reported explicitly. Development publication does not promote runtime support or legacy releaseEligible flags.

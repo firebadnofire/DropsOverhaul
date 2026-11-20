@@ -1,6 +1,8 @@
 """Guard CI consolidation and native loader/version boundaries."""
 from copy import deepcopy
 import sys
+import json
+import hashlib
 from pathlib import Path
 import unittest
 from unittest.mock import patch
@@ -9,7 +11,7 @@ from zipfile import ZipFile
 import tomllib
 
 sys.path.insert(0, str(Path(__file__).resolve().parents[1] / 'tools'))
-from distributions import plan, merge_forge
+from distributions import plan, merge_forge, collect
 from targets import load
 
 
@@ -85,6 +87,61 @@ class DistributionPlanTests(unittest.TestCase):
                     dependencies = {d['modId']: d['versionRange'] for d in data['dependencies']['dropsoverhaul']}
                     self.assertEqual(dependencies['minecraft'], '[1.19],[1.19.4]')
                     self.assertEqual(dependencies['forge'], '[41.1.0],[45.4.0]')
+
+
+
+class ReleaseCollectionTests(unittest.TestCase):
+    def fixture(self, incoming):
+        manifest = deepcopy(load())
+        group = plan(manifest)['include'][0]
+        folder = incoming / group['artifact']
+        folder.mkdir(parents=True)
+        artifact = folder / group['artifact']
+        artifact.write_bytes(b'compiled artifact fixture')
+        report = dict(artifact=group['artifact'], source=group['source'], state='compiled',
+                      sha256=hashlib.sha256(artifact.read_bytes()).hexdigest(),
+                      coverage=[dict(target=t, state='compiled') for t in group['targets']])
+        (folder / 'validation.json').write_text(json.dumps(report))
+        return manifest, artifact
+
+    def test_partial_build_collects_only_successes_and_reports_failures(self):
+        with TemporaryDirectory() as directory:
+            incoming = Path(directory) / 'incoming'
+            manifest, artifact = self.fixture(incoming)
+            failed = plan(manifest)['include'][1]
+            diagnostic = incoming / ('compile-log-' + failed['source'])
+            diagnostic.mkdir()
+            (diagnostic / 'validation.json').write_text(json.dumps(dict(state='failed', reason='Compiler failed')))
+            destination = Path(directory) / 'dist'
+            summary = collect(manifest, incoming, destination)
+            self.assertEqual(summary['artifacts'], [artifact.name])
+            self.assertEqual(len(summary['unavailable']), 8)
+            self.assertEqual(summary['unavailable'][0]['state'], 'failed')
+            self.assertEqual(summary['unavailable'][0]['reason'], 'Compiler failed')
+            self.assertEqual((destination / artifact.name).read_bytes(), artifact.read_bytes())
+            self.assertTrue((destination / (artifact.name + '.validation.json')).is_file())
+            self.assertTrue((destination / 'DISTRIBUTIONS.json').is_file())
+
+    def test_tampered_download_fails_before_staging(self):
+        with TemporaryDirectory() as directory:
+            manifest, artifact = self.fixture(Path(directory) / 'incoming')
+            artifact.write_bytes(b'tampered')
+            destination = Path(directory) / 'dist'
+            with self.assertRaisesRegex(ValueError, 'checksum mismatch'):
+                collect(manifest, Path(directory) / 'incoming', destination)
+            self.assertFalse(destination.exists())
+
+    def test_no_successful_outputs_cannot_release(self):
+        with TemporaryDirectory() as directory:
+            with self.assertRaisesRegex(ValueError, 'No successfully compiled'):
+                collect(load(), Path(directory) / 'incoming', Path(directory) / 'dist')
+
+    def test_development_policy_must_be_explicit(self):
+        manifest = deepcopy(load())
+        manifest.pop('developmentReleasePolicy')
+        with TemporaryDirectory() as directory:
+            with self.assertRaisesRegex(ValueError, 'does not authorize'):
+                collect(manifest, Path(directory), Path(directory) / 'dist')
 
 
 if __name__ == '__main__':

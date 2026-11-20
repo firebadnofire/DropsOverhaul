@@ -1174,5 +1174,6 @@
       "tier": 1,
       "artifactId": "forge-26.3"
     }
-  ]
+  ],
+  "developmentReleasePolicy": "compiled-consolidated"
 }

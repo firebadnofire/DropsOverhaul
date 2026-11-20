@@ -4,9 +4,107 @@ on:
     branches: [main]
   pull_request:
     branches: [main]
+  workflow_dispatch:
 
 jobs:
-  build:
+  inventory:
+    runs-on: ubuntu-latest
+    container:
+      image: node:24-bookworm
+    outputs:
+      matrix: ${{ steps.plan.outputs.matrix }}
+    steps:
+      - uses: https://data.forgejo.org/actions/checkout@d23441a48e516b6c34aea4fa41551a30e30af803
+        with:
+          persist-credentials: false
+      - run: apt-get update && apt-get install -y --no-install-recommends python3
+      - name: Validate distribution planning and release collection
+        run: python3 tests/test_distributions.py
+      - id: plan
+        run: echo "matrix=$(python3 tools/distributions.py plan)" >> "$GITHUB_OUTPUT"
+      - uses: https://data.forgejo.org/actions/upload-artifact@ff15f0306b3f739f7b6fd43fb5d26cd321bd4de5
+        with:
+          name: distribution-inventory
+          path: build/ci-distribution-inventory.json
+          if-no-files-found: error
+
+  compile:
+    needs: inventory
+    runs-on: ubuntu-latest
+    container:
+      image: node:24-bookworm
+    timeout-minutes: 60
+    strategy:
+      max-parallel: 1
+      fail-fast: false
+      matrix: ${{ fromJSON(needs.inventory.outputs.matrix) }}
+    steps:
+      - uses: https://data.forgejo.org/actions/checkout@d23441a48e516b6c34aea4fa41551a30e30af803
+        with:
+          persist-credentials: false
+      - id: dependencies
+        run: apt-get update && apt-get install -y --no-install-recommends python3 git ca-certificates unzip
+      - name: Compiler JDK
+        id: compiler-jdk
+        if: ${{ matrix.compilerJava != matrix.buildJava }}
+        uses: https://data.forgejo.org/actions/setup-java@cf277c60eb25467037889841efdb72551f06f6c3
+        with:
+          distribution: temurin
+          java-version: ${{ matrix.compilerJava }}
+      - name: Preserve compiler toolchain path
+        if: ${{ matrix.compilerJava != matrix.buildJava }}
+        env:
+          COMPILER_JAVA: ${{ matrix.compilerJava }}
+        run: echo "JAVA_HOME_${COMPILER_JAVA}_X64=$JAVA_HOME" >> "$GITHUB_ENV"
+      - name: Build JDK
+        id: build-jdk
+        uses: https://data.forgejo.org/actions/setup-java@cf277c60eb25467037889841efdb72551f06f6c3
+        with:
+          distribution: temurin
+          java-version: ${{ matrix.buildJava }}
+      - name: Compile one distinct native distribution
+        shell: bash
+        env:
+          SOURCE_ID: ${{ matrix.source }}
+        run: |
+          set -euo pipefail
+          mkdir -p build/ci-distributions/"$SOURCE_ID"
+          python3 tools/distributions.py build --source "$SOURCE_ID" 2>&1 | tee build/ci-distributions/"$SOURCE_ID"/compile.log
+      - name: Upload this JAR and its compilation report
+        if: success()
+        uses: https://data.forgejo.org/actions/upload-artifact@ff15f0306b3f739f7b6fd43fb5d26cd321bd4de5
+        with:
+          name: ${{ matrix.artifact }}
+          path: |
+            build/ci-distributions/${{ matrix.source }}/${{ matrix.artifact }}
+            build/ci-distributions/${{ matrix.source }}/validation.json
+          if-no-files-found: error
+      - name: Record a failed or blocked build
+        shell: bash
+        if: ${{ failure() && steps.dependencies.outcome == 'success' }}
+        env:
+          SOURCE_ID: ${{ matrix.source }}
+          TOOLCHAIN_FAILED: ${{ steps.compiler-jdk.outcome == 'failure' || steps.build-jdk.outcome == 'failure' }}
+        run: |
+          set -euo pipefail
+          if [[ "$TOOLCHAIN_FAILED" == 'true' ]]; then
+            python3 tools/distributions.py failure --source "$SOURCE_ID" --blocked
+          else
+            python3 tools/distributions.py failure --source "$SOURCE_ID"
+          fi
+      - name: Preserve compiler diagnostics
+        if: always()
+        uses: https://data.forgejo.org/actions/upload-artifact@ff15f0306b3f739f7b6fd43fb5d26cd321bd4de5
+        with:
+          name: compile-log-${{ matrix.source }}
+          path: |
+            build/ci-distributions/${{ matrix.source }}/compile.log
+            build/ci-distributions/${{ matrix.source }}/validation.json
+          if-no-files-found: warn
+
+  collect:
+    if: ${{ always() && needs.inventory.result == 'success' && needs.compile.result != 'cancelled' }}
+    needs: [inventory, compile]
     runs-on: ubuntu-latest
     container:
       image: node:24-bookworm
@@ -14,33 +112,21 @@ jobs:
       - uses: https://data.forgejo.org/actions/checkout@d23441a48e516b6c34aea4fa41551a30e30af803
         with:
           persist-credentials: false
-      - uses: https://data.forgejo.org/actions/setup-java@cf277c60eb25467037889841efdb72551f06f6c3
+      - run: apt-get update && apt-get install -y --no-install-recommends python3
+      - uses: https://data.forgejo.org/actions/download-artifact@9bc31d5ccc31df68ecc42ccf4149144866c47d8a
         with:
-          distribution: temurin
-          java-version: '21'
-      - run: ./gradlew build --no-daemon
-      - name: Collect eligible distributions
-        shell: bash
-        run: |
-          set -euo pipefail
-          ./gradlew stageReleaseArtifacts --no-daemon
-          mkdir -p dist
-          for file in build/release-dist/*.jar; do
-            case "$file" in *-sources.jar|*-javadoc.jar|*-tests.jar) continue ;; esac
-            [ -f "$file" ] || continue
-            jar tf "$file" | grep -Ex 'plugin\.yml|META-INF/mods\.toml|mcmod\.info' >/dev/null
-            cp "$file" dist/
-          done
-          compgen -G 'dist/*.jar' >/dev/null
+          path: incoming
+      - name: Validate and collect successful consolidated builds
+        run: python3 tools/distributions.py collect --input incoming --output dist
       - uses: https://data.forgejo.org/actions/upload-artifact@ff15f0306b3f739f7b6fd43fb5d26cd321bd4de5
         with:
-          name: plugin-jars
-          path: dist/*.jar
+          name: release-distributions
+          path: dist/*
           if-no-files-found: error
 
   release:
-    if: ${{ forgejo.event_name == 'push' && forgejo.ref == 'refs/heads/main' }}
-    needs: build
+    if: ${{ always() && needs.collect.result == 'success' && forgejo.event_name == 'push' && forgejo.ref == 'refs/heads/main' }}
+    needs: collect
     runs-on: ubuntu-latest
     container:
       image: node:24-bookworm
@@ -50,7 +136,7 @@ jobs:
         run: apt-get update && apt-get install -y --no-install-recommends gnupg curl jq
       - uses: https://data.forgejo.org/actions/download-artifact@9bc31d5ccc31df68ecc42ccf4149144866c47d8a
         with:
-          name: plugin-jars
+          name: release-distributions
           path: dist
       - name: Sign and verify distributions
         shell: bash
@@ -68,8 +154,9 @@ jobs:
           shopt -s nullglob
           jars=(*.jar)
           [ "${#jars[@]}" -gt 0 ] || { echo 'No plugin JARs received' >&2; exit 1; }
-          sha256sum -- "${jars[@]}" > SHA256SUMS
-          for file in "${jars[@]}" SHA256SUMS; do
+          files=(*.jar *.json)
+          sha256sum -- "${files[@]}" > SHA256SUMS
+          for file in "${files[@]}" SHA256SUMS; do
             printf '%s\n' "$CI_KEY_PASSPHRASE" | gpg --batch --yes --pinentry-mode loopback --passphrase-fd 0 --armor --detach-sign -- "$file"
             gpg --batch --verify "$file.asc" "$file"
           done
@@ -148,13 +235,13 @@ jobs:
           if [ "$status" = 404 ]; then
             api -X POST -H 'Content-Type: application/json' --data "$(jq -n --arg tag "$tag" --arg sha "$SHA" '{tag_name:$tag,target:$sha}')" "$base/tags" >/dev/null
           fi
-          body=$(printf 'Repository: %s\nCommit: %s\nBranch: main\nBuild system: Gradle\nJava: 21' "$REPOSITORY" "$SHA")
+          body=$(printf 'Repository: %s\nCommit: %s\nBranch: main\nBuild system: Gradle, per-target JDKs\nConsolidated Paper/Spigot and native Forge development builds. See DISTRIBUTIONS.json and per-JAR validation reports for exact coverage, runtime test status, and unavailable groups. Signing does not establish runtime compatibility.' "$REPOSITORY" "$SHA")
           payload=$(jq -n --arg tag "$tag" --arg sha "$SHA" --arg title "Development Build ${SHA:0:12}" --arg body "$body" '{tag_name:$tag,target_commitish:$sha,name:$title,body:$body,draft:true,prerelease:true}')
           api -X POST -H 'Content-Type: application/json' --data "$payload" "$base/releases" > release.json
           id=$(jq -er .id release.json)
           trap 'echo "Publication failed: draft release ID $id ($tag) may contain partial assets; inspect it before retrying. No existing assets were replaced." >&2' ERR
           api "$base/tags/$tag" | jq -e --arg sha "$SHA" '.commit.sha == $sha' >/dev/null || { echo "Tag $tag does not resolve to expected commit $SHA; draft $id requires inspection" >&2; exit 1; }
-          for file in dist/*.jar dist/*.jar.asc dist/SHA256SUMS dist/SHA256SUMS.asc; do
+          for file in dist/*; do
             api -X POST -F "attachment=@$file" "$base/releases/$id/assets" >/dev/null
           done
           api "$base/releases/$id/assets" > assets.json

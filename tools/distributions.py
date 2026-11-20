@@ -1,5 +1,6 @@
-"""Compile-only CI inventory and staging; never starts servers or enables releases."""
+"""Manifest-backed compilation, consolidation, and development release staging; no servers or signing."""
 import argparse
+import hashlib
 import json
 from pathlib import Path
 import re
@@ -55,7 +56,7 @@ def artifact_path(target, manifest):
 def table(manifest):
     lines = ['# Compilation-only CI distributions', '',
              'Generated from `versions.json` with `python tools/distributions.py table`.', '',
-             'Each row is one individually downloadable artifact from **Compile Paper and Forge distributions**. No server starts, signing, or releases occur in this workflow.', '',
+             'Each row is one individually downloadable artifact from **Signed development release**. Pushes to main sign and publish successful consolidated builds; pull requests and manual runs compile only. No test servers start.', '',
              'Range filenames show target endpoints, not verification of every intermediate patch or every Paper/Spigot pairing. Exact runtime status remains in [SUPPORT.md](SUPPORT.md) and each artifact includes `validation.json` with its current SHA-256 and matching prior evidence.', '',
              '| JAR | Exact configured targets | Build / compiler Java |', '| --- | --- | --- |']
     for group in plan(manifest)['include']:
@@ -70,7 +71,7 @@ def table(manifest):
               '| Target | Consolidated JAR validation | Evidence | Limitations / failure |', '| --- | --- | --- | --- |'] + evidence_rows
     lines += ['', 'The inventory artifact also lists advertised exact candidates with no implemented build recipe. Those remain unimplemented, including Forge versions for which no native distribution exists.', '',
               'Shared Forge JARs are allowed only when every member recipe compiles and all non-loader-metadata payload entries match byte for byte. Their loader metadata declares exact Minecraft and Forge-build sets. A payload mismatch fails that group and requires separate JARs; other groups continue.', '',
-              'The standalone Paper build and existing signed release workflow remain unchanged. CI consolidation affects downloadable build artifacts only.', '']
+              'The standalone Paper build remains independently buildable. The default push-to-main release signs successful consolidated JARs, their validation reports, DISTRIBUTIONS.json, and SHA256SUMS. Missing groups are reported explicitly. Development publication does not promote runtime support or legacy releaseEligible flags.', '']
     return '\n'.join(lines)
 
 
@@ -174,13 +175,63 @@ def stage(source_id):
     return result
 
 
+
+def collect(manifest, incoming, destination):
+    """Validate downloaded build outputs before the secret-bearing signing job."""
+    if manifest.get('developmentReleasePolicy') != 'compiled-consolidated':
+        raise ValueError('Manifest does not authorize compiled consolidated development releases')
+    selected = []
+    missing = []
+    for group in plan(manifest)['include']:
+        folder = incoming / group['artifact']
+        artifact = folder / group['artifact']
+        report_path = folder / 'validation.json'
+        if not folder.exists():
+            diagnostic_path = incoming / ('compile-log-' + group['source']) / 'validation.json'
+            diagnostic = json.loads(diagnostic_path.read_text(encoding='utf-8')) if diagnostic_path.exists() else {}
+            missing.append(dict(artifact=group['artifact'],
+                                state=diagnostic['state'] if diagnostic.get('state') in ('failed', 'blocked') else 'blocked',
+                                reason=diagnostic.get('reason') or 'No successful uploaded build artifact or structured failure report; inspect compilation and upload diagnostics.'))
+            print('WARNING: No successful build output: ' + group['artifact'], flush=True)
+            continue
+        report = json.loads(report_path.read_text(encoding='utf-8'))
+        if (report.get('artifact') != group['artifact'] or report.get('source') != group['source']
+                or report.get('state') != 'compiled'
+                or sorted(c['target'] for c in report.get('coverage', [])) != sorted(group['targets'])):
+            raise ValueError('Invalid compilation report: ' + group['artifact'])
+        if hashlib.sha256(artifact.read_bytes()).hexdigest() != report.get('sha256'):
+            raise ValueError('Downloaded artifact checksum mismatch: ' + group['artifact'])
+        selected.append((artifact, report_path, report))
+    if not selected:
+        raise ValueError('No successfully compiled distributions available for release')
+    destination.mkdir(parents=True, exist_ok=True)
+    if any(destination.iterdir()):
+        raise ValueError('Release destination must be empty; use a fresh staging directory')
+    for artifact, report_path, report in selected:
+        shutil.copyfile(artifact, destination / artifact.name)
+        shutil.copyfile(report_path, destination / (artifact.name + '.validation.json'))
+    summary = dict(policy=manifest['developmentReleasePolicy'],
+                   note='Development builds. Signing authenticates files, not runtime compatibility. Consult per-JAR validation reports; omitted groups did not provide successful build outputs.',
+                   artifacts=[r['artifact'] for _, _, r in selected], unavailable=missing,
+                   unimplemented=[c for c in manifest['candidates'] if not c.get('artifactId')])
+    (destination / 'DISTRIBUTIONS.json').write_text(json.dumps(summary, indent=2) + '\n', encoding='utf-8')
+    return summary
+
+
 def main():
     parser = argparse.ArgumentParser()
-    parser.add_argument('action', choices=['plan', 'stage', 'build', 'failure', 'table'])
+    parser.add_argument('action', choices=['plan', 'stage', 'build', 'failure', 'table', 'collect'])
     parser.add_argument('--source')
+    parser.add_argument('--input', type=Path)
+    parser.add_argument('--output', type=Path)
     parser.add_argument('--blocked', action='store_true')
     args = parser.parse_args()
     manifest = load()
+    if args.action == 'collect':
+        if not args.input or not args.output:
+            parser.error('collect requires --input and --output')
+        print(json.dumps(collect(manifest, args.input, args.output), indent=2))
+        return
     if args.action == 'table':
         text = table(manifest)
         (ROOT / 'CI-DISTRIBUTIONS.md').write_text(text, encoding='utf-8')

@@ -44,12 +44,14 @@ and server-load evidence must not be presented as gameplay or client compatibili
 The manual compatibility workflow installs real native servers. A separate manual
 matrix runs Tier 1 boundaries or all Tier 2 candidates sequentially, preserving
 per-target failure/blocker results. Neither promotes a compiled JAR into releases.
-The existing signed Paper release is retained with explicit artifact eligibility.
-The independent `build-distributions.yml` workflow compiles manifest recipes into
-individual CI downloads without booting servers or invoking the release workflow.
+The standalone Paper release-staging task retains its explicit artifact eligibility.
+The default `main.yml` workflow compiles consolidated distributions sequentially,
+then signs and publishes successful outputs on pushes to main. Pull requests and
+manual dispatch compile only. Build failures are reported without discarding
+successful groups. Signed per-JAR reports and DISTRIBUTIONS.json distinguish
+compilation from runtime support. The signing job checks out no source.
 Paper/Spigot consolidation has separate runtime evidence. Native Forge groups
-must have identical compiled payloads and use explicit version sets in loader
-metadata; compilation reports preserve exact validation limits.
+must have identical compiled payloads and explicit version sets in loader metadata.
 The restrictive license remains unchanged; public redistribution rights are not
 inferred from local implementation or testing.
 
