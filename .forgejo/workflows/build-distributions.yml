@@ -1,0 +1,101 @@
+name: Compile Paper and Forge distributions
+on:
+  push:
+    branches: [main]
+  pull_request:
+    branches: [main]
+  workflow_dispatch:
+
+jobs:
+  inventory:
+    runs-on: ubuntu-latest
+    container:
+      image: node:24-bookworm
+    outputs:
+      matrix: ${{ steps.plan.outputs.matrix }}
+    steps:
+      - uses: https://data.forgejo.org/actions/checkout@d23441a48e516b6c34aea4fa41551a30e30af803
+        with:
+          persist-credentials: false
+      - run: apt-get update && apt-get install -y --no-install-recommends python3
+      - id: plan
+        run: echo "matrix=$(python3 tools/distributions.py plan)" >> "$GITHUB_OUTPUT"
+      - uses: https://data.forgejo.org/actions/upload-artifact@ff15f0306b3f739f7b6fd43fb5d26cd321bd4de5
+        with:
+          name: distribution-inventory
+          path: build/ci-distribution-inventory.json
+          if-no-files-found: error
+
+  compile:
+    needs: inventory
+    runs-on: ubuntu-latest
+    container:
+      image: node:24-bookworm
+    timeout-minutes: 60
+    strategy:
+      max-parallel: 1
+      fail-fast: false
+      matrix: ${{ fromJSON(needs.inventory.outputs.matrix) }}
+    steps:
+      - uses: https://data.forgejo.org/actions/checkout@d23441a48e516b6c34aea4fa41551a30e30af803
+        with:
+          persist-credentials: false
+      - id: dependencies
+        run: apt-get update && apt-get install -y --no-install-recommends python3 git ca-certificates unzip
+      - name: Compiler JDK
+        id: compiler-jdk
+        if: ${{ matrix.compilerJava != matrix.buildJava }}
+        uses: https://data.forgejo.org/actions/setup-java@cf277c60eb25467037889841efdb72551f06f6c3
+        with:
+          distribution: temurin
+          java-version: ${{ matrix.compilerJava }}
+      - name: Preserve compiler toolchain path
+        if: ${{ matrix.compilerJava != matrix.buildJava }}
+        env:
+          COMPILER_JAVA: ${{ matrix.compilerJava }}
+        run: echo "JAVA_HOME_${COMPILER_JAVA}_X64=$JAVA_HOME" >> "$GITHUB_ENV"
+      - name: Build JDK
+        id: build-jdk
+        uses: https://data.forgejo.org/actions/setup-java@cf277c60eb25467037889841efdb72551f06f6c3
+        with:
+          distribution: temurin
+          java-version: ${{ matrix.buildJava }}
+      - name: Compile one distinct native distribution
+        shell: bash
+        env:
+          SOURCE_ID: ${{ matrix.source }}
+        run: |
+          set -euo pipefail
+          mkdir -p build/ci-distributions/"$SOURCE_ID"
+          python3 tools/distributions.py build --source "$SOURCE_ID" 2>&1 | tee build/ci-distributions/"$SOURCE_ID"/compile.log
+      - name: Upload this JAR and its compilation report
+        if: success()
+        uses: https://data.forgejo.org/actions/upload-artifact@ff15f0306b3f739f7b6fd43fb5d26cd321bd4de5
+        with:
+          name: ${{ matrix.artifact }}
+          path: |
+            build/ci-distributions/${{ matrix.source }}/${{ matrix.artifact }}
+            build/ci-distributions/${{ matrix.source }}/validation.json
+          if-no-files-found: error
+      - name: Record a failed or blocked build
+        shell: bash
+        if: ${{ failure() && steps.dependencies.outcome == 'success' }}
+        env:
+          SOURCE_ID: ${{ matrix.source }}
+          TOOLCHAIN_FAILED: ${{ steps.compiler-jdk.outcome == 'failure' || steps.build-jdk.outcome == 'failure' }}
+        run: |
+          set -euo pipefail
+          if [[ "$TOOLCHAIN_FAILED" == 'true' ]]; then
+            python3 tools/distributions.py failure --source "$SOURCE_ID" --blocked
+          else
+            python3 tools/distributions.py failure --source "$SOURCE_ID"
+          fi
+      - name: Preserve compiler diagnostics
+        if: always()
+        uses: https://data.forgejo.org/actions/upload-artifact@ff15f0306b3f739f7b6fd43fb5d26cd321bd4de5
+        with:
+          name: compile-log-${{ matrix.source }}
+          path: |
+            build/ci-distributions/${{ matrix.source }}/compile.log
+            build/ci-distributions/${{ matrix.source }}/validation.json
+          if-no-files-found: warn

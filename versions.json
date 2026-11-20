@@ -26,7 +26,9 @@
       "releaseReason": "Existing Paper release channel only; this is not a runtime compatibility claim.",
       "evidence": [
         "validation/paper-1.21.11.json"
-      ]
+      ],
+      "ciBinarySource": "spigot-1.19",
+      "ciEvidence": "validation/paper-1.21.11-shared-bukkit.json"
     },
     {
       "id": "spigot-1.12.2",
@@ -111,7 +113,8 @@
       "releaseEligible": false,
       "evidence": [
         "validation/spigot-1.19.json"
-      ]
+      ],
+      "ciArtifact": "DropsOverhaul-paper-spigot-mc1.19-to-26.3-{version}.jar"
     },
     {
       "id": "spigot-1.19.4",
@@ -152,7 +155,9 @@
       ],
       "externalFixture": true,
       "nativeTestHooks": true,
-      "commandFeedback": "component"
+      "commandFeedback": "component",
+      "ciArtifact": "DropsOverhaul-forge-mc1.19-to-1.19.4-{version}.jar",
+      "ciEvidence": "validation/forge-1.19-ci-merged.json"
     },
     {
       "id": "forge-1.19.4",
@@ -174,7 +179,9 @@
       ],
       "externalFixture": true,
       "nativeTestHooks": true,
-      "commandFeedback": "component"
+      "commandFeedback": "component",
+      "ciBinarySource": "forge-1.19",
+      "ciEvidence": "validation/forge-1.19.4-ci-merged.json"
     },
     {
       "id": "forge-1.20",
@@ -230,12 +237,15 @@
       "artifact": "DropsOverhaul-forge-mc1.19.1-{version}.jar",
       "artifactDirectory": "forge-1.19/build/libs",
       "expectedId": "dropsoverhaul",
-      "state": "untested",
+      "state": "compiled",
       "releaseEligible": false,
-      "evidence": [],
+      "evidence": [
+        "validation/forge-1.19.1.json"
+      ],
       "externalFixture": true,
       "nativeTestHooks": true,
-      "commandFeedback": "component"
+      "commandFeedback": "component",
+      "ciBinarySource": "forge-1.19"
     },
     {
       "id": "spigot-1.19.2",
@@ -269,12 +279,15 @@
       "artifact": "DropsOverhaul-forge-mc1.19.2-{version}.jar",
       "artifactDirectory": "forge-1.19/build/libs",
       "expectedId": "dropsoverhaul",
-      "state": "untested",
+      "state": "compiled",
       "releaseEligible": false,
-      "evidence": [],
+      "evidence": [
+        "validation/forge-1.19.2.json"
+      ],
       "externalFixture": true,
       "nativeTestHooks": true,
-      "commandFeedback": "component"
+      "commandFeedback": "component",
+      "ciBinarySource": "forge-1.19"
     },
     {
       "id": "spigot-1.19.3",
@@ -308,12 +321,15 @@
       "artifact": "DropsOverhaul-forge-mc1.19.3-{version}.jar",
       "artifactDirectory": "forge-1.19/build/libs",
       "expectedId": "dropsoverhaul",
-      "state": "untested",
+      "state": "compiled",
       "releaseEligible": false,
-      "evidence": [],
+      "evidence": [
+        "validation/forge-1.19.3.json"
+      ],
       "externalFixture": true,
       "nativeTestHooks": true,
-      "commandFeedback": "component"
+      "commandFeedback": "component",
+      "ciBinarySource": "forge-1.19"
     },
     {
       "id": "spigot-1.20",
@@ -357,7 +373,9 @@
       "externalFixture": true,
       "nativeTestHooks": true,
       "forgeEventBus": 6,
-      "commandFeedback": "supplier"
+      "commandFeedback": "supplier",
+      "ciArtifact": "DropsOverhaul-forge-mc1.20.6-to-1.21-{version}.jar",
+      "ciEvidence": "validation/forge-1.20.6-ci-merged.json"
     },
     {
       "id": "spigot-1.20.5",
@@ -429,7 +447,9 @@
       "limitations": [
         "Requires exactly Forge 51.0.5. Forge 51.0.33 passed gameplay but failed clean shutdown; the configuration-watcher hang was reproduced without DropsOverhaul. See validation/forge-1.21-forge51.0.33-failed.json.",
         "Mineflayer reports a declare_recipes decoder warning on 1.21; crafting is outside the tested drop/inventory/command scenarios. Other packet decoder failures fail validation."
-      ]
+      ],
+      "ciBinarySource": "forge-1.20.6",
+      "ciEvidence": "validation/forge-1.21-ci-merged.json"
     },
     {
       "id": "spigot-1.21",
@@ -498,7 +518,9 @@
       "forgeEventBus": 7,
       "forgeGradle": "7.0.17",
       "minecraftMappings": "none",
-      "overflowApi": "legacy"
+      "overflowApi": "legacy",
+      "ciArtifact": "DropsOverhaul-forge-mc26.1-to-26.2-{version}.jar",
+      "ciEvidence": "validation/forge-26.1-ci-merged.json"
     },
     {
       "id": "spigot-26.1",
@@ -544,7 +566,9 @@
       "forgeEventBus": 7,
       "forgeGradle": "7.0.17",
       "minecraftMappings": "none",
-      "overflowApi": "legacy"
+      "overflowApi": "legacy",
+      "ciBinarySource": "forge-26.1",
+      "ciEvidence": "validation/forge-26.1.2-ci-merged.json"
     },
     {
       "id": "spigot-26.1.2",
@@ -595,7 +619,9 @@
       "limitations": [
         "Pinned Mineflayer 4.39.0 / minecraft-data 3.119.0 has no usable protocol data for Minecraft 26.2. Gameplay and vanilla-client connectivity remain unverified."
       ],
-      "overflowApi": "legacy"
+      "overflowApi": "legacy",
+      "ciBinarySource": "forge-26.1",
+      "ciEvidence": "validation/forge-26.2-ci-merged.json"
     },
     {
       "id": "spigot-26.2",

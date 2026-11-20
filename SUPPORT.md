@@ -15,11 +15,11 @@ A gameplay-tested state covers the scenarios in the linked evidence for that exa
 | forge-1.19.4 | `DropsOverhaul-forge-mc1.19.4-4.2.jar` | 45.4.0 | 17 / 17 / 17 | [gameplay-tested](validation/forge-1.19.4.json) | True / True / True | False |
 | forge-1.20 | `DropsOverhaul-forge-mc1.20-4.2.jar` | 46.0.14 | 17 / 17 / 17 | [gameplay-tested](validation/forge-1.20.json) | True / True / True | False |
 | spigot-1.19.1 | `DropsOverhaul-spigot-mc1.19-4.2.jar` | — | 21 / 17 / 17 | [compiled](validation/spigot-1.19.1.json) | True / False / False | False |
-| forge-1.19.1 | `DropsOverhaul-forge-mc1.19.1-4.2.jar` | 42.0.9 | 17 / 17 / 17 | untested | False / False / False | False |
+| forge-1.19.1 | `DropsOverhaul-forge-mc1.19.1-4.2.jar` | 42.0.9 | 17 / 17 / 17 | [compiled](validation/forge-1.19.1.json) | True / False / False | False |
 | spigot-1.19.2 | `DropsOverhaul-spigot-mc1.19-4.2.jar` | — | 21 / 17 / 17 | [compiled](validation/spigot-1.19.2.json) | True / False / False | False |
-| forge-1.19.2 | `DropsOverhaul-forge-mc1.19.2-4.2.jar` | 43.5.0 | 17 / 17 / 17 | untested | False / False / False | False |
+| forge-1.19.2 | `DropsOverhaul-forge-mc1.19.2-4.2.jar` | 43.5.0 | 17 / 17 / 17 | [compiled](validation/forge-1.19.2.json) | True / False / False | False |
 | spigot-1.19.3 | `DropsOverhaul-spigot-mc1.19-4.2.jar` | — | 21 / 17 / 17 | [compiled](validation/spigot-1.19.3.json) | True / False / False | False |
-| forge-1.19.3 | `DropsOverhaul-forge-mc1.19.3-4.2.jar` | 44.1.0 | 17 / 17 / 17 | untested | False / False / False | False |
+| forge-1.19.3 | `DropsOverhaul-forge-mc1.19.3-4.2.jar` | 44.1.0 | 17 / 17 / 17 | [compiled](validation/forge-1.19.3.json) | True / False / False | False |
 | spigot-1.20 | `DropsOverhaul-spigot-mc1.19-4.2.jar` | — | 21 / 17 / 17 | [gameplay-tested](validation/spigot-1.20.json) | True / True / True | False |
 | forge-1.20.6 | `DropsOverhaul-forge-mc1.20.6-4.2.jar` | 50.2.14 | 25 / 21 / 21 | [gameplay-tested](validation/forge-1.20.6.json) | True / True / True | False |
 | spigot-1.20.5 | `DropsOverhaul-spigot-mc1.19-4.2.jar` | — | 21 / 17 / 21 | [gameplay-tested](validation/spigot-1.20.5.json) | True / True / True | False |
@@ -94,11 +94,11 @@ Tier 1 selects group boundaries and API/Java boundaries. Tier 2 includes every e
 | spigot | 1.19 | 1 | spigot-1.19 | gameplay-tested |
 | forge | 1.19 | 1 | forge-1.19 | gameplay-tested |
 | spigot | 1.19.1 | 2 | spigot-1.19.1 | compiled |
-| forge | 1.19.1 | 2 | forge-1.19.1 | untested |
+| forge | 1.19.1 | 2 | forge-1.19.1 | compiled |
 | spigot | 1.19.2 | 2 | spigot-1.19.2 | compiled |
-| forge | 1.19.2 | 2 | forge-1.19.2 | untested |
+| forge | 1.19.2 | 2 | forge-1.19.2 | compiled |
 | spigot | 1.19.3 | 2 | spigot-1.19.3 | compiled |
-| forge | 1.19.3 | 2 | forge-1.19.3 | untested |
+| forge | 1.19.3 | 2 | forge-1.19.3 | compiled |
 | spigot | 1.19.4 | 1 | spigot-1.19.4 | gameplay-tested |
 | forge | 1.19.4 | 1 | forge-1.19.4 | gameplay-tested |
 | spigot | 1.20 | 1 | spigot-1.20 | gameplay-tested |

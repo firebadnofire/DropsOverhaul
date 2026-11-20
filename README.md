@@ -153,6 +153,17 @@ enables release eligibility. Regenerate the matrix with
 
 ### Release and licensing
 
+The separate **Compile Paper and Forge distributions** workflow builds all existing
+manifest recipes and provides each distinct JAR as an individually downloadable
+CI artifact. It starts no test servers and has no signing or publication steps.
+See [CI-DISTRIBUTIONS.md](CI-DISTRIBUTIONS.md) for the generated output list.
+Compatible Paper/Spigot targets share one runtime-tested Bukkit binary. Forge
+targets share a JAR only when their independently compiled payloads are identical;
+the merged metadata accepts explicit Minecraft versions and Forge build pins.
+Each download includes a validation report. Compilation does not establish runtime
+support, and filename range endpoints do not verify untested intermediate patches.
+The inventory download reports exact candidates without an implemented recipe.
+
 The existing Paper development release, SHA-256 manifest, and detached GPG signing
 flow remain in place. Only targets explicitly marked `releaseEligible` enter
 `stageReleaseArtifacts`; compiling another target does not publish it. New targets

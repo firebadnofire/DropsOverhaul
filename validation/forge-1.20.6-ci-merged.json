@@ -1,0 +1,30 @@
+{
+  "target": "forge-1.20.6",
+  "artifact": "DropsOverhaul-forge-mc1.20.6-to-1.21-4.2.jar",
+  "sha256": "466927fe9cf8ac16d9d3be625f02d500d8a788007a1ac46ccda50b9b436c3363",
+  "platform": "forge",
+  "minecraft": "1.20.6",
+  "forgeBuild": "50.2.14",
+  "serverJava": 21,
+  "javaVersion": "openjdk version \"21.0.9\" 2025-10-21 LTS\nOpenJDK Runtime Environment Temurin-21.0.9+10 (build 21.0.9+10-LTS)\nOpenJDK 64-Bit Server VM Temurin-21.0.9+10 (build 21.0.9+10-LTS, mixed mode, sharing)",
+  "requiredServerJava": 21,
+  "networkTransport": "java-nio",
+  "validationMode": "gameplay",
+  "clientScriptSha256": "f109991daa651fbc8aea9ca03ee00dde5d5b42578c86352bc2bc9755389f5c56",
+  "runnerSha256": "a325496e780a2fd06123e2c1dda70f9276cf8fd934a07a60fabe4342ec711222",
+  "shutdownHelperSha256": "396a31d8e6eb947cc21618666c32292ce8654e96341d9baaab0c7de3dc9c644c",
+  "protocolHelperSha256": "679082392b1637fd2c46b8af0405528eb9beef401bd6afff8fe214fb5f4f9d58",
+  "testedAtUTC": "2026-11-20T21:52:37.783778+00:00",
+  "state": "failed",
+  "compiled": true,
+  "startup": true,
+  "gameplay": false,
+  "serverVersionLines": [
+    "[16:52:48] [Server thread/INFO] [minecraft/DedicatedServer]: Starting minecraft server version 1.20.6"
+  ],
+  "configurationProbe": true,
+  "error": "Gameplay test failed: Mineflayer play.declare_recipes / ArmorTrimMaterial decoder error. Original unmerged JAR fails the same control; no gameplay pass is claimed for this merged artifact.",
+  "shutdownDurationSeconds": 0.882,
+  "serverExitCode": 0,
+  "controlEvidence": "validation/forge-1.20.6-ci-control.json"
+}
