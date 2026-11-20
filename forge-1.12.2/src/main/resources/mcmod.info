@@ -1,0 +1,12 @@
+[
+  {
+    "modid": "dropsoverhaul",
+    "name": "DropsOverhaul",
+    "description": "Native server-side inventory delivery of configured block drops",
+    "version": "${version}",
+    "mcversion": "1.12.2",
+    "authorList": ["Frank", "BitByLogic"],
+    "acceptableRemoteVersions": "*",
+    "serverSideOnly": true
+  }
+]

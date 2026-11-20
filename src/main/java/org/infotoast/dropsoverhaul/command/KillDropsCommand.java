@@ -6,9 +6,9 @@ import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Item;
 import org.bukkit.entity.Player;
 import org.infotoast.dropsoverhaul.DropsOverhaul;
-import org.jetbrains.annotations.NotNull;
 
-import java.util.Collection;
+import java.util.List;
+import java.util.stream.Collectors;
 
 public class KillDropsCommand implements CommandExecutor {
     private final DropsOverhaul plugin;
@@ -18,29 +18,40 @@ public class KillDropsCommand implements CommandExecutor {
     }
 
     @Override
-    public boolean onCommand(@NotNull CommandSender sender, @NotNull Command command, @NotNull String label, @NotNull String[] args) {
+    public boolean onCommand(CommandSender sender, Command command, String label, String[] args) {
         if (!sender.hasPermission("dropsoverhaul.killdrops")) {
             sender.sendMessage(DropsOverhaul.colorize(plugin.getConfig().getString("Messages.No-Permission", "&cAccess denied.")));
             return true;
         }
 
-        if (!(sender instanceof Player player)) {
-            sender.sendMessage(DropsOverhaul.colorize(plugin.getConfig().getString("Messages.Players-Only", "&cOnly players can use this command.")));
+        if (!(sender instanceof Player)) {
+            sender.sendMessage(DropsOverhaul.colorize(plugin.getConfig().getString("Messages.Player-Only", "&cOnly players can use this command.")));
             return true;
         }
+        Player player = (Player) sender;
 
         int radius = plugin.getConfig().getInt("Settings.Kill-Drops-Radius");
 
+        if (args.length > 1) return false;
         if (args.length == 1) {
-            radius = Integer.parseInt(args[0]);
-
             if (!sender.hasPermission("dropsoverhaul.killdrops.radius")) {
                 sender.sendMessage(DropsOverhaul.colorize(plugin.getConfig().getString("Messages.No-Permission-Killdrops-Radius", "&cYou don't have permission to specify a radius.")));
                 return true;
             }
+            try {
+                radius = Integer.parseInt(args[0]);
+            } catch (NumberFormatException error) {
+                sender.sendMessage("Radius must be a non-negative integer.");
+                return true;
+            }
+        }
+        if (radius < 0) {
+            sender.sendMessage("Radius must be a non-negative integer.");
+            return true;
         }
 
-        Collection<Item> nearbyItems = player.getWorld().getNearbyEntitiesByType(Item.class, player.getLocation(), radius);
+        List<Item> nearbyItems = player.getWorld().getNearbyEntities(player.getLocation(), radius, radius, radius).stream()
+                .filter(entity -> entity instanceof Item).map(entity -> (Item) entity).collect(Collectors.toList());
         int itemAmount = nearbyItems.size();
         nearbyItems.forEach(Item::remove);
 

@@ -1,0 +1,37 @@
+{
+  "target": "spigot-1.20",
+  "artifact": "DropsOverhaul-spigot-mc1.19-4.2.jar",
+  "sha256": "f3032a132dab545d6f8d89ac2c820dbf259abbf39e44c389d610fc386f837cc2",
+  "platform": "spigot",
+  "minecraft": "1.20",
+  "forgeBuild": null,
+  "serverJava": 17,
+  "javaVersion": "openjdk version \"17.0.21\" 2026-10-20\nOpenJDK Runtime Environment Temurin-17.0.21+9 (build 17.0.21+9)\nOpenJDK 64-Bit Server VM Temurin-17.0.21+9 (build 17.0.21+9, mixed mode, sharing)",
+  "requiredServerJava": 17,
+  "clientScriptSha256": "bcf6d72f3ba0621f39367a0a36fff51d9b6c438b959db23ad79704097f3aa5ec",
+  "runnerSha256": "713f3e1f335b91f5924ff98de953eb945e9af1f2b927c994f62431a87bd05f79",
+  "testedAtUTC": "2026-11-20T01:59:11.168714+00:00",
+  "state": "gameplay-tested",
+  "compiled": true,
+  "startup": true,
+  "gameplay": true,
+  "serverVersionLines": [
+    "[20:59:37] [Server thread/INFO]: Starting minecraft server version 1.20",
+    "[20:59:37] [Server thread/INFO]: This server is running CraftBukkit version 3790-Spigot-ddcbdcc-b2322fe (MC: 1.20) (Implementing API version 1.20-R0.1-SNAPSHOT)"
+  ],
+  "scenarios": [
+    "[20:59:47] [Server thread/INFO]: [DropsOverhaulRuntimeTests] DO_TEST_PASS commands inventory=1 ground=0",
+    "[20:59:49] [Server thread/INFO]: [DropsOverhaulRuntimeTests] DO_TEST_PASS selected inventory=1 ground=0",
+    "[20:59:51] [Server thread/INFO]: [DropsOverhaulRuntimeTests] DO_TEST_PASS metadata inventory=1 ground=0",
+    "[20:59:53] [Server thread/INFO]: [DropsOverhaulRuntimeTests] DO_TEST_PASS unselected inventory=0 ground=1",
+    "[20:59:54] [Server thread/INFO]: [DropsOverhaulRuntimeTests] DO_TEST_PASS partial inventory=64 ground=0",
+    "[20:59:56] [Server thread/INFO]: [DropsOverhaulRuntimeTests] DO_TEST_PASS full-keep inventory=0 ground=1",
+    "[20:59:57] [Server thread/INFO]: [DropsOverhaulRuntimeTests] DO_TEST_PASS full-delete inventory=0 ground=0",
+    "[20:59:59] [Server thread/INFO]: [DropsOverhaulRuntimeTests] DO_TEST_PASS silk inventory=1 ground=0",
+    "[21:00:01] [Server thread/INFO]: [DropsOverhaulRuntimeTests] DO_TEST_PASS fortune inventory=2 ground=0",
+    "[21:00:02] [Server thread/INFO]: [DropsOverhaulRuntimeTests] DO_TEST_PASS custom inventory=3 ground=0",
+    "[21:00:04] [Server thread/INFO]: [DropsOverhaulRuntimeTests] DO_TEST_PASS creative inventory=0 ground=0",
+    "[21:00:06] [Server thread/INFO]: [DropsOverhaulRuntimeTests] DO_TEST_PASS cancelled inventory=0 ground=0"
+  ],
+  "serverExitCode": 0
+}

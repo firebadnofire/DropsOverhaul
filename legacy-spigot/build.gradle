@@ -1,0 +1,49 @@
+plugins { id 'java' }
+
+def manifest = new groovy.json.JsonSlurper().parse(file('../versions.json'))
+def target = manifest.artifacts.find { it.id == 'spigot-1.12.2' }
+group = 'org.infotoast'
+version = manifest.projectVersion
+repositories {
+    mavenCentral()
+    maven { url = 'https://hub.spigotmc.org/nexus/content/repositories/public/' }
+}
+dependencies { compileOnly 'org.spigotmc:spigot-api:1.12.2-R0.1-SNAPSHOT' }
+java { toolchain.languageVersion = JavaLanguageVersion.of(8) }
+sourceSets.main {
+    java.srcDirs = ['src/main/java', '../common/src/main/java', '../src/main/java/org/infotoast/dropsoverhaul/command']
+    resources.srcDirs = ['../src/main/resources']
+}
+tasks.named('processResources') {
+    filesMatching('plugin.yml') {
+        expand(version: project.version)
+        filter { line -> line.startsWith('api-version:') ? null : line }
+    }
+}
+tasks.named('jar') {
+    archiveFileName = target.artifact.replace('{version}', project.version.toString())
+}
+
+sourceSets {
+    runtimeTest {
+        java.srcDirs = ['../tests/legacy-spigot/src']
+        java.srcDir '../tests/paper/src'
+        // The modern event adapter has its own source root to avoid duplicate classes.
+        java.exclude '**/NativeDrops.java'
+        compileClasspath += sourceSets.main.output + configurations.compileClasspath
+        resources.srcDir '../tests/paper/resources'
+    }
+}
+// Explicit source list keeps the Java 8 fixture independent of modern events.
+tasks.named('compileRuntimeTestJava') {
+    source = files('../tests/paper/src/org/infotoast/dropsoverhaul/tests/RuntimeTests.java',
+            '../tests/legacy-spigot/src/org/infotoast/dropsoverhaul/tests/NativeDrops.java')
+}
+tasks.named('processRuntimeTestResources') {
+    filesMatching('plugin.yml') { filter { line -> line.startsWith('api-version:') ? null : line } }
+}
+tasks.register('runtimeTestJar', Jar) {
+    archiveFileName = 'DropsOverhaul-runtime-tests.jar'
+    destinationDirectory = layout.buildDirectory.dir('test-fixtures')
+    from sourceSets.runtimeTest.output
+}

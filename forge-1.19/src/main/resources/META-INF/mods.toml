@@ -1,0 +1,22 @@
+modLoader="javafml"
+loaderVersion="[${forgeMajor},)"
+license="All Rights Reserved; see LICENSE.md"
+[[mods]]
+modId="dropsoverhaul"
+version="${version}"
+displayName="DropsOverhaul"
+displayTest="IGNORE_ALL_VERSION"
+authors="Frank, BitByLogic"
+description='''Native server-side inventory delivery of selected block drops.'''
+[[dependencies.dropsoverhaul]]
+modId="forge"
+mandatory=true
+versionRange="[${forgeBuild},${forgeNextMajor})"
+ordering="NONE"
+side="SERVER"
+[[dependencies.dropsoverhaul]]
+modId="minecraft"
+mandatory=true
+versionRange="[${minecraft}]"
+ordering="NONE"
+side="SERVER"

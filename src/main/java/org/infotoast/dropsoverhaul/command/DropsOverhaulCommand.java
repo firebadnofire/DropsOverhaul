@@ -1,13 +1,12 @@
 package org.infotoast.dropsoverhaul.command;
 
-import org.bukkit.Material;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
 import org.infotoast.dropsoverhaul.DropsOverhaul;
-import org.jetbrains.annotations.NotNull;
 
 import java.util.List;
+import java.util.Locale;
 
 public class DropsOverhaulCommand implements CommandExecutor {
 
@@ -18,7 +17,7 @@ public class DropsOverhaulCommand implements CommandExecutor {
     }
 
     @Override
-    public boolean onCommand(@NotNull CommandSender sender, @NotNull Command command, @NotNull String s, @NotNull String[] args) {
+    public boolean onCommand(CommandSender sender, Command command, String s, String[] args) {
         if (args.length == 0) {
             sendHelp(sender);
             return true;
@@ -42,17 +41,15 @@ public class DropsOverhaulCommand implements CommandExecutor {
             }
 
             if (args.length == 2) {
-                try {
-                    Material.valueOf(args[1].toUpperCase());
-                } catch (IllegalArgumentException e) {
-                    doWhenBlockInvalid(sender, args[1]);
-                    return true;
-                } catch (NullPointerException e) {
+                String resolved = plugin.resolveBlockName(args[1]);
+                if (resolved == null) {
                     doWhenBlockInvalid(sender, args[1]);
                     return true;
                 }
                 List<String> dropsList = plugin.getConfig().getStringList("Settings.Drops-To-Remove");
-                dropsList.addLast(args[1].toUpperCase());
+                if (!dropsList.contains(resolved)) {
+                    dropsList.add(resolved);
+                }
                 plugin.getConfig().set("Settings.Drops-To-Remove", dropsList);
                 plugin.saveConfig();
                 sender.sendMessage(DropsOverhaul.colorize(plugin.getConfig().getString("Messages.Command.Block-Added", "&aSuccessfully added block to list!")).replace("%block%", args[1].toUpperCase()));
@@ -66,6 +63,10 @@ public class DropsOverhaulCommand implements CommandExecutor {
         if (args[0].equalsIgnoreCase("removeBlock")) {
             if (!sender.hasPermission("dropsoverhaul.removeblock")) {
                 sender.sendMessage(DropsOverhaul.colorize(plugin.getConfig().getString("Messages.No-Permission", "&cAccess denied.")));
+                return true;
+            }
+            if (args.length != 2) {
+                sendHelp(sender);
                 return true;
             }
             List<String> dropsList = plugin.getConfig().getStringList("Settings.Drops-To-Remove");
@@ -86,7 +87,7 @@ public class DropsOverhaulCommand implements CommandExecutor {
                 return true;
             }
             List<String> dropsList = plugin.getConfig().getStringList("Settings.Drops-To-Remove");
-            sender.sendMessage(DropsOverhaul.colorize(plugin.getConfig().getString("Messasges.Command.List-Header", "&aDrops Overhaul-affected blocks list")));
+            sender.sendMessage(DropsOverhaul.colorize(plugin.getConfig().getString("Messages.Command.List-Header", "&aDrops Overhaul-affected blocks list")));
             for (String drop : dropsList) {
                 sender.sendMessage(DropsOverhaul.colorize(plugin.getConfig().getString("Messages.Command.List-Item", "&7-  &a%block%")).replace("%block%", drop));
             }

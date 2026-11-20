@@ -1,0 +1,33 @@
+{
+  "mineflayer": "4.39.0",
+  "minecraftProtocol": "1.68.0",
+  "minecraftData": "3.119.0",
+  "versions": [
+    {
+      "minecraft": "26.1",
+      "protocol": 775,
+      "usableData": true
+    },
+    {
+      "minecraft": "26.1.2",
+      "protocol": 775,
+      "usableData": true
+    },
+    {
+      "minecraft": "26.2",
+      "protocol": 776,
+      "usableData": false
+    },
+    {
+      "minecraft": "26.3",
+      "protocol": 777,
+      "usableData": false
+    }
+  ],
+  "checkedAtUTC": "2026-11-20T20:26:27.287797+00:00",
+  "upstreamSources": [
+    "https://github.com/PrismarineJS/mineflayer/discussions/4190",
+    "https://github.com/PrismarineJS/mineflayer/issues/4001"
+  ],
+  "policy": "No protocol substitution, proxy translation, or unmerged client forks are used. Missing protocol data limits the corresponding manifest targets to startup-only validation."
+}

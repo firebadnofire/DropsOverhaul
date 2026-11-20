@@ -1,0 +1,111 @@
+name: Manual exact Minecraft matrix
+on:
+  workflow_dispatch:
+    inputs:
+      tier:
+        description: '1 = boundary targets; 2 = every exact candidate (exhaustive, independent from development builds)'
+        type: choice
+        default: '1'
+        options: ['1', '2']
+
+jobs:
+  inventory:
+    runs-on: ubuntu-latest
+    container:
+      image: node:24-bookworm
+    outputs:
+      matrix: ${{ steps.select.outputs.matrix }}
+    steps:
+      - uses: https://data.forgejo.org/actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1
+        with:
+          persist-credentials: false
+      - run: apt-get update && apt-get install -y --no-install-recommends python3
+      - id: select
+        env:
+          TIER: ${{ inputs.tier }}
+        run: echo "matrix=$(python3 tools/test_matrix.py --tier "$TIER")" >> "$GITHUB_OUTPUT"
+  test:
+    needs: inventory
+    runs-on: ubuntu-latest
+    container:
+      image: node:24-bookworm
+    timeout-minutes: 100
+    strategy:
+      max-parallel: 1
+      fail-fast: false
+      matrix: ${{ fromJSON(needs.inventory.outputs.matrix) }}
+    steps:
+      - uses: https://data.forgejo.org/actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1
+        with:
+          persist-credentials: false
+      - run: apt-get update && apt-get install -y --no-install-recommends git ca-certificates python3 unzip
+      - name: Report unmapped or unavailable target
+        if: ${{ !matrix.implemented }}
+        env:
+          TARGET: ${{ matrix.id }}
+        run: python3 tools/test_matrix.py --tier 2 --blocked "$TARGET"
+      - name: Compiler JDK
+        id: compiler-jdk
+        if: ${{ matrix.implemented && matrix.compilerJava != matrix.buildJava }}
+        uses: https://data.forgejo.org/actions/setup-java@d1374f8ac74474200d16ef8ecee22c7ae7a51880
+        with:
+          distribution: temurin
+          java-version: ${{ matrix.compilerJava }}
+      - name: Build JDK
+        id: build-jdk
+        if: matrix.implemented
+        uses: https://data.forgejo.org/actions/setup-java@d1374f8ac74474200d16ef8ecee22c7ae7a51880
+        with:
+          distribution: temurin
+          java-version: ${{ matrix.buildJava }}
+      - name: Build exact artifact and fixture
+        if: matrix.implemented
+        env:
+          LAUNCHER: ${{ matrix.launcher }}
+          DIRECTORY: ${{ matrix.directory }}
+          TASK: ${{ matrix.task }}
+          TARGET: ${{ matrix.id }}
+          EXTERNAL: ${{ matrix.externalFixture }}
+        run: |
+          set -eu
+          bash "$LAUNCHER" -p "$DIRECTORY" "$TASK" -PtargetId="$TARGET" --no-daemon
+          bash "$LAUNCHER" -p "$DIRECTORY" runtimeTestJar -PtargetId="$TARGET" --no-daemon
+          python3 tools/check_artifact.py --target "$TARGET"
+          mkdir -p build/test-client
+          cp tests/client/package*.json build/test-client/
+          npm ci --prefix build/test-client --no-audit --no-fund
+      - name: Server JDK
+        id: server-jdk
+        if: matrix.implemented
+        uses: https://data.forgejo.org/actions/setup-java@d1374f8ac74474200d16ef8ecee22c7ae7a51880
+        with:
+          distribution: temurin
+          java-version: ${{ matrix.serverJava }}
+      - name: Install and exercise native server
+        if: matrix.implemented
+        env:
+          TARGET: ${{ matrix.id }}
+        run: |
+          set -eu
+          python3 tests/install_server.py --target "$TARGET" --java "$JAVA_HOME/bin/java"
+          python3 tests/run_paper.py --target "$TARGET" --java "$JAVA_HOME/bin/java"
+      - name: Record incomplete stage
+        if: always()
+        env:
+          RESULT_TARGET: ${{ matrix.id }}
+          TOOLCHAIN_OUTCOME: ${{ (steps.compiler-jdk.outcome == 'failure' || steps.build-jdk.outcome == 'failure' || steps.server-jdk.outcome == 'failure') && 'failure' || 'success' }}
+        run: python3 tools/ci_result.py
+      - name: Preserve results even when another target fails
+        if: always()
+        uses: https://data.forgejo.org/actions/upload-artifact@ff15f0306b3f739f7b6fd43fb5d26cd321bd4de5
+        with:
+          name: validation-${{ matrix.id }}
+          path: |
+            build/runtime/**/result.json
+            build/runtime/**/console.log
+            build/runtime/**/client.log
+            build/runtime/**/shutdown-threads.txt
+            build/runtime/**/run-inputs/**
+            build/runtime/**/installer.log
+            build/runtime/**/crash-reports/
+          if-no-files-found: warn

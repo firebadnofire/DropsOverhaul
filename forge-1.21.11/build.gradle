@@ -1,0 +1,67 @@
+plugins {
+    id 'java'
+    id 'net.minecraftforge.gradle' version '7.0.3'
+    id 'com.gradleup.shadow' version '9.3.2'
+}
+def manifest = new groovy.json.JsonSlurper().parse(file('../versions.json'))
+def targetId = providers.gradleProperty('targetId').getOrElse('forge-1.21.11')
+def target = manifest.artifacts.find { it.id == targetId && it.buildDirectory == 'forge-1.21.11' }
+if (target == null) throw new GradleException("No target in this build: ${targetId}")
+def eventBus = target.forgeEventBus ?: 7
+if (!(eventBus in [6, 7])) throw new GradleException("Unsupported Forge event bus: ${eventBus}")
+group = 'org.infotoast'
+version = manifest.projectVersion
+java.toolchain.languageVersion = JavaLanguageVersion.of(target.compilerJava)
+if (target.minecraftMappings != 'none') {
+    minecraft { mappings channel: 'official', version: target.minecraft }
+}
+repositories {
+    minecraft.mavenizer(it)
+    maven fg.forgeMaven
+    maven fg.minecraftLibsMaven
+    mavenCentral()
+}
+configurations {
+    bundled
+    implementation.extendsFrom bundled
+}
+dependencies {
+    implementation minecraft.dependency("net.minecraftforge:forge:${target.minecraft}-${target.forgeBuild}")
+    bundled 'org.yaml:snakeyaml:2.5'
+}
+sourceSets.main {
+    java.setSrcDirs([eventBus == 6 ? '../forge-1.19/src/main/java' : 'src/main/java',
+                     '../common/src/main/java', '../forge-common/src/main/java'])
+    if (eventBus == 6) java.srcDir "../forge-adapters/feedback-${target.commandFeedback}"
+    if (eventBus == 7) java.srcDir "../forge-adapters/overflow-${target.overflowApi}"
+    resources.srcDir '../src/main/resources'
+    resources.exclude 'plugin.yml'
+}
+processResources {
+    inputs.property 'targetId', targetId
+    filesMatching('META-INF/mods.toml') {
+        expand(version: project.version, minecraft: target.minecraft, forgeBuild: target.forgeBuild,
+                forgeMajor: target.forgeBuild.tokenize('.').first(),
+                forgeVersionRange: target.exactForgeBuild ? "[${target.forgeBuild}]" : "[${target.forgeBuild},${target.forgeBuild.tokenize('.').first().toInteger() + 1})")
+    }
+}
+jar { archiveClassifier = 'unshaded-dev' }
+shadowJar {
+    configurations = [project.configurations.bundled]
+    archiveFileName = target.artifact.replace('{version}', project.version.toString())
+    relocate 'org.yaml.snakeyaml', 'org.infotoast.dropsoverhaul.internal.yaml'
+}
+build.dependsOn shadowJar
+
+sourceSets {
+    runtimeTest {
+        java.srcDir eventBus == 6 ? '../tests/forge-1.19/src' : '../tests/forge-1.21.11/src'
+        resources.srcDir eventBus == 6 ? '../tests/forge-1.19/resources' : '../tests/forge-1.21.11/resources'
+        compileClasspath += sourceSets.main.output + configurations.compileClasspath
+    }
+}
+tasks.register('runtimeTestJar', Jar) {
+    archiveFileName = 'DropsOverhaul-runtime-tests.jar'
+    destinationDirectory = layout.buildDirectory.dir('test-fixtures')
+    from sourceSets.runtimeTest.output
+}

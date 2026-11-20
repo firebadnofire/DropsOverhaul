@@ -1,0 +1,36 @@
+{
+  "target": "forge-1.20",
+  "artifact": "DropsOverhaul-forge-mc1.20-4.2.jar",
+  "sha256": "e3e42c8566e915477064b290c84734a3a0804603e488a0a7aca95edd4b094b9b",
+  "platform": "forge",
+  "minecraft": "1.20",
+  "forgeBuild": "46.0.14",
+  "serverJava": 17,
+  "javaVersion": "openjdk version \"17.0.21\" 2026-10-20\nOpenJDK Runtime Environment Temurin-17.0.21+9 (build 17.0.21+9)\nOpenJDK 64-Bit Server VM Temurin-17.0.21+9 (build 17.0.21+9, mixed mode, sharing)",
+  "requiredServerJava": 17,
+  "clientScriptSha256": "6a536715f767dc4ea9cad83f9c62c244f2f5e4b4937ad80005b9f44da74fa3f5",
+  "runnerSha256": "713f3e1f335b91f5924ff98de953eb945e9af1f2b927c994f62431a87bd05f79",
+  "testedAtUTC": "2026-11-20T19:11:35.388375+00:00",
+  "state": "gameplay-tested",
+  "compiled": true,
+  "startup": true,
+  "gameplay": true,
+  "serverVersionLines": [
+    "[14:11:48] [Server thread/INFO] [minecraft/DedicatedServer]: Starting minecraft server version 1.20"
+  ],
+  "scenarios": [
+    "DO_TEST_PASS commands inventory=1 groundEntities=0",
+    "DO_TEST_PASS selected inventory=1 groundEntities=0",
+    "DO_TEST_PASS unselected inventory=0 groundEntities=1",
+    "DO_TEST_PASS partial inventory=64 groundEntities=0",
+    "DO_TEST_PASS full-keep inventory=0 groundEntities=1",
+    "DO_TEST_PASS full-delete inventory=0 groundEntities=0",
+    "DO_TEST_PASS silk inventory=1 groundEntities=0",
+    "DO_TEST_PASS fortune inventory=3 groundEntities=0",
+    "DO_TEST_PASS custom inventory=3 groundEntities=0",
+    "DO_TEST_PASS creative inventory=0 groundEntities=0",
+    "DO_TEST_PASS cancelled inventory=0 groundEntities=0",
+    "DO_TEST_PASS gamerule inventory=0 groundEntities=0"
+  ],
+  "serverExitCode": 0
+}

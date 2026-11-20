@@ -1,0 +1,110 @@
+[
+  {
+    "minecraft": "1.12.2",
+    "revision": "1.12.2",
+    "descriptorName": "1573k",
+    "actualMinecraft": "1.12.2",
+    "rawBuildDataVersion": "1.12.2",
+    "buildData": "be360cc298a06b5355ecd057f5b1feb894a73f0f",
+    "source": "https://hub.spigotmc.org/versions/1.12.2.json"
+  },
+  {
+    "minecraft": "1.19",
+    "revision": "1.19",
+    "descriptorName": "3553",
+    "actualMinecraft": "1.19",
+    "rawBuildDataVersion": "1.19",
+    "buildData": "e6ebde42e39100b18ca0265596b04f557b2b27cc",
+    "source": "https://hub.spigotmc.org/versions/1.19.json"
+  },
+  {
+    "minecraft": "1.19.4",
+    "revision": "1.19.4",
+    "descriptorName": "3763",
+    "actualMinecraft": "1.19.4",
+    "rawBuildDataVersion": "1.19.4",
+    "buildData": "4d9436f7b66190ad21fe4e3975b73a36b7ad2a7e",
+    "source": "https://hub.spigotmc.org/versions/1.19.4.json"
+  },
+  {
+    "minecraft": "1.20",
+    "revision": "3790",
+    "descriptorName": "3790",
+    "actualMinecraft": "1.20",
+    "rawBuildDataVersion": "1.20",
+    "buildData": "2881c6b6dd146126596342d4025d37a9a84a0b03",
+    "source": "https://hub.spigotmc.org/versions/3790.json"
+  },
+  {
+    "minecraft": "1.20.5",
+    "revision": "4130",
+    "descriptorName": "4130",
+    "actualMinecraft": "1.20.5",
+    "rawBuildDataVersion": "1.20.5",
+    "buildData": "a7f7c2118b877fde4cf0f32f1f730ffcdee8e9ee",
+    "source": "https://hub.spigotmc.org/versions/4130.json"
+  },
+  {
+    "minecraft": "1.20.6",
+    "revision": "1.20.6",
+    "descriptorName": "4195-b",
+    "actualMinecraft": "1.20.6",
+    "rawBuildDataVersion": "1.20.6",
+    "buildData": "32d1baf2f4e0e7cd1ac22c7b2f6eb4c387e8a343",
+    "source": "https://hub.spigotmc.org/versions/1.20.6.json"
+  },
+  {
+    "minecraft": "1.21",
+    "revision": "4260",
+    "descriptorName": "4260",
+    "actualMinecraft": "1.21",
+    "rawBuildDataVersion": "1.21",
+    "buildData": "ae1e7b1e31cd3a3892bb05a6ccdcecc48c73c455",
+    "source": "https://hub.spigotmc.org/versions/4260.json"
+  },
+  {
+    "minecraft": "1.21.11",
+    "revision": "1.21.11",
+    "descriptorName": "4598",
+    "actualMinecraft": "1.21.11",
+    "rawBuildDataVersion": "1.21.11_unobfuscated",
+    "buildData": "beeae81d9ac5521b767517cee44d0c345a8be3fb",
+    "source": "https://hub.spigotmc.org/versions/1.21.11.json"
+  },
+  {
+    "minecraft": "26.1",
+    "revision": "4610",
+    "descriptorName": "4610",
+    "actualMinecraft": "26.1",
+    "rawBuildDataVersion": "26.1",
+    "buildData": "5bf19beb9fa500f822c35eb5634fcefe27f60bec",
+    "source": "https://hub.spigotmc.org/versions/4610.json"
+  },
+  {
+    "minecraft": "26.1.2",
+    "revision": "26.1.2",
+    "descriptorName": "4632",
+    "actualMinecraft": "26.1.2",
+    "rawBuildDataVersion": "26.1.2",
+    "buildData": "1766f29a5430bb246f77e2fe24debb93a26a587d",
+    "source": "https://hub.spigotmc.org/versions/26.1.2.json"
+  },
+  {
+    "minecraft": "26.2",
+    "revision": "26.2",
+    "descriptorName": "4648",
+    "actualMinecraft": "26.2",
+    "rawBuildDataVersion": "26.2",
+    "buildData": "41bd187bd86ec1444d2dc9e0188e53559cf870b3",
+    "source": "https://hub.spigotmc.org/versions/26.2.json"
+  },
+  {
+    "minecraft": "26.3",
+    "revision": "26.3",
+    "descriptorName": "4664",
+    "actualMinecraft": "26.3",
+    "rawBuildDataVersion": "26.3",
+    "buildData": "39e62795554dcf6b62e922bc061705b3dc228f88",
+    "source": "https://hub.spigotmc.org/versions/26.3.json"
+  }
+]

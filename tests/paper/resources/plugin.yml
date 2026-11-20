@@ -1,0 +1,11 @@
+name: DropsOverhaulRuntimeTests
+version: '1'
+main: org.infotoast.dropsoverhaul.tests.RuntimeTests
+api-version: '1.21'
+depend: [DropsOverhaul]
+commands:
+  dofixture:
+    permission: dofixture.run
+permissions:
+  dofixture.run:
+    default: op

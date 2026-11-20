@@ -1,0 +1,550 @@
+{
+  "sources": [
+    "https://piston-meta.mojang.com/mc/game/version_manifest_v2.json",
+    "https://files.minecraftforge.net/net/minecraftforge/forge/promotions_slim.json",
+    "https://maven.minecraftforge.net/net/minecraftforge/forge/maven-metadata.xml"
+  ],
+  "warning": "Availability is not compatibility; all candidates are untested.",
+  "targets": [
+    {
+      "minecraft": "1.12.2",
+      "tier": 1,
+      "spigot": {
+        "available": true,
+        "descriptor": "https://hub.spigotmc.org/versions/1.12.2.json",
+        "javaVersions": [
+          52,
+          54
+        ]
+      },
+      "forge": {
+        "build": "14.23.5.2859",
+        "available": true,
+        "reason": null
+      },
+      "state": "untested"
+    },
+    {
+      "minecraft": "1.19",
+      "tier": 1,
+      "spigot": {
+        "available": true,
+        "descriptor": "https://hub.spigotmc.org/versions/1.19.json",
+        "javaVersions": [
+          61,
+          62
+        ]
+      },
+      "forge": {
+        "build": "41.1.0",
+        "available": true,
+        "reason": null
+      },
+      "state": "untested"
+    },
+    {
+      "minecraft": "1.19.1",
+      "tier": 2,
+      "spigot": {
+        "available": true,
+        "descriptor": "https://hub.spigotmc.org/versions/1.19.1.json",
+        "javaVersions": [
+          61,
+          62
+        ]
+      },
+      "forge": {
+        "build": "42.0.9",
+        "available": true,
+        "reason": null
+      },
+      "state": "untested"
+    },
+    {
+      "minecraft": "1.19.2",
+      "tier": 2,
+      "spigot": {
+        "available": true,
+        "descriptor": "https://hub.spigotmc.org/versions/1.19.2.json",
+        "javaVersions": [
+          61,
+          63
+        ]
+      },
+      "forge": {
+        "build": "43.5.0",
+        "available": true,
+        "reason": null
+      },
+      "state": "untested"
+    },
+    {
+      "minecraft": "1.19.3",
+      "tier": 2,
+      "spigot": {
+        "available": true,
+        "descriptor": "https://hub.spigotmc.org/versions/1.19.3.json",
+        "javaVersions": [
+          61,
+          64
+        ]
+      },
+      "forge": {
+        "build": "44.1.0",
+        "available": true,
+        "reason": null
+      },
+      "state": "untested"
+    },
+    {
+      "minecraft": "1.19.4",
+      "tier": 1,
+      "spigot": {
+        "available": true,
+        "descriptor": "https://hub.spigotmc.org/versions/1.19.4.json",
+        "javaVersions": [
+          61,
+          64
+        ]
+      },
+      "forge": {
+        "build": "45.4.0",
+        "available": true,
+        "reason": null
+      },
+      "state": "untested"
+    },
+    {
+      "minecraft": "1.20",
+      "tier": 1,
+      "spigot": {
+        "available": true,
+        "descriptor": "https://hub.spigotmc.org/versions/1.20.json",
+        "javaVersions": [
+          61,
+          65
+        ]
+      },
+      "forge": {
+        "build": "46.0.14",
+        "available": true,
+        "reason": null
+      },
+      "state": "untested"
+    },
+    {
+      "minecraft": "1.20.1",
+      "tier": 2,
+      "spigot": {
+        "available": true,
+        "descriptor": "https://hub.spigotmc.org/versions/1.20.1.json",
+        "javaVersions": [
+          61,
+          65
+        ]
+      },
+      "forge": {
+        "build": "47.4.28",
+        "available": true,
+        "reason": null
+      },
+      "state": "untested"
+    },
+    {
+      "minecraft": "1.20.2",
+      "tier": 2,
+      "spigot": {
+        "available": true,
+        "descriptor": "https://hub.spigotmc.org/versions/1.20.2.json",
+        "javaVersions": [
+          61,
+          65
+        ]
+      },
+      "forge": {
+        "build": "48.1.0",
+        "available": true,
+        "reason": null
+      },
+      "state": "untested"
+    },
+    {
+      "minecraft": "1.20.3",
+      "tier": 2,
+      "spigot": {
+        "available": true,
+        "descriptor": "https://hub.spigotmc.org/versions/1.20.3.json",
+        "javaVersions": [
+          61,
+          66
+        ]
+      },
+      "forge": {
+        "build": "49.0.2",
+        "available": true,
+        "reason": null
+      },
+      "state": "untested"
+    },
+    {
+      "minecraft": "1.20.4",
+      "tier": 2,
+      "spigot": {
+        "available": true,
+        "descriptor": "https://hub.spigotmc.org/versions/1.20.4.json",
+        "javaVersions": [
+          61,
+          66
+        ]
+      },
+      "forge": {
+        "build": "49.2.13",
+        "available": true,
+        "reason": null
+      },
+      "state": "untested"
+    },
+    {
+      "minecraft": "1.20.5",
+      "tier": 1,
+      "spigot": {
+        "available": true,
+        "descriptor": "https://hub.spigotmc.org/versions/1.20.5.json",
+        "javaVersions": [
+          65,
+          66
+        ]
+      },
+      "forge": {
+        "build": null,
+        "available": false,
+        "reason": "No exact Minecraft version in Forge Maven metadata"
+      },
+      "state": "untested"
+    },
+    {
+      "minecraft": "1.20.6",
+      "tier": 1,
+      "spigot": {
+        "available": true,
+        "descriptor": "https://hub.spigotmc.org/versions/1.20.6.json",
+        "javaVersions": [
+          65,
+          66
+        ]
+      },
+      "forge": {
+        "build": "50.2.14",
+        "available": true,
+        "reason": null
+      },
+      "state": "untested"
+    },
+    {
+      "minecraft": "1.21",
+      "tier": 1,
+      "spigot": {
+        "available": true,
+        "descriptor": "https://hub.spigotmc.org/versions/1.21.json",
+        "javaVersions": [
+          65,
+          67
+        ]
+      },
+      "forge": {
+        "build": "51.0.33",
+        "available": true,
+        "reason": null
+      },
+      "state": "untested"
+    },
+    {
+      "minecraft": "1.21.1",
+      "tier": 2,
+      "spigot": {
+        "available": true,
+        "descriptor": "https://hub.spigotmc.org/versions/1.21.1.json",
+        "javaVersions": [
+          65,
+          67
+        ]
+      },
+      "forge": {
+        "build": "52.1.20",
+        "available": true,
+        "reason": null
+      },
+      "state": "untested"
+    },
+    {
+      "minecraft": "1.21.2",
+      "tier": 2,
+      "spigot": {
+        "available": true,
+        "descriptor": "https://hub.spigotmc.org/versions/1.21.2.json",
+        "javaVersions": [
+          65,
+          67
+        ]
+      },
+      "forge": {
+        "build": null,
+        "available": false,
+        "reason": "No exact Minecraft version in Forge Maven metadata"
+      },
+      "state": "untested"
+    },
+    {
+      "minecraft": "1.21.3",
+      "tier": 2,
+      "spigot": {
+        "available": true,
+        "descriptor": "https://hub.spigotmc.org/versions/1.21.3.json",
+        "javaVersions": [
+          65,
+          67
+        ]
+      },
+      "forge": {
+        "build": "53.1.16",
+        "available": true,
+        "reason": null
+      },
+      "state": "untested"
+    },
+    {
+      "minecraft": "1.21.4",
+      "tier": 2,
+      "spigot": {
+        "available": true,
+        "descriptor": "https://hub.spigotmc.org/versions/1.21.4.json",
+        "javaVersions": [
+          65,
+          68
+        ]
+      },
+      "forge": {
+        "build": "54.1.22",
+        "available": true,
+        "reason": null
+      },
+      "state": "untested"
+    },
+    {
+      "minecraft": "1.21.5",
+      "tier": 2,
+      "spigot": {
+        "available": true,
+        "descriptor": "https://hub.spigotmc.org/versions/1.21.5.json",
+        "javaVersions": [
+          65,
+          68
+        ]
+      },
+      "forge": {
+        "build": "55.1.18",
+        "available": true,
+        "reason": null
+      },
+      "state": "untested"
+    },
+    {
+      "minecraft": "1.21.6",
+      "tier": 2,
+      "spigot": {
+        "available": true,
+        "descriptor": "https://hub.spigotmc.org/versions/1.21.6.json",
+        "javaVersions": [
+          65,
+          68
+        ]
+      },
+      "forge": {
+        "build": "56.0.9",
+        "available": true,
+        "reason": null
+      },
+      "state": "untested"
+    },
+    {
+      "minecraft": "1.21.7",
+      "tier": 2,
+      "spigot": {
+        "available": true,
+        "descriptor": "https://hub.spigotmc.org/versions/1.21.7.json",
+        "javaVersions": [
+          65,
+          69
+        ]
+      },
+      "forge": {
+        "build": "57.0.3",
+        "available": true,
+        "reason": null
+      },
+      "state": "untested"
+    },
+    {
+      "minecraft": "1.21.8",
+      "tier": 2,
+      "spigot": {
+        "available": true,
+        "descriptor": "https://hub.spigotmc.org/versions/1.21.8.json",
+        "javaVersions": [
+          65,
+          69
+        ]
+      },
+      "forge": {
+        "build": "58.1.26",
+        "available": true,
+        "reason": null
+      },
+      "state": "untested"
+    },
+    {
+      "minecraft": "1.21.9",
+      "tier": 2,
+      "spigot": {
+        "available": true,
+        "descriptor": "https://hub.spigotmc.org/versions/1.21.9.json",
+        "javaVersions": [
+          65,
+          69
+        ]
+      },
+      "forge": {
+        "build": "59.0.5",
+        "available": true,
+        "reason": null
+      },
+      "state": "untested"
+    },
+    {
+      "minecraft": "1.21.10",
+      "tier": 2,
+      "spigot": {
+        "available": true,
+        "descriptor": "https://hub.spigotmc.org/versions/1.21.10.json",
+        "javaVersions": [
+          65,
+          69
+        ]
+      },
+      "forge": {
+        "build": "60.1.18",
+        "available": true,
+        "reason": null
+      },
+      "state": "untested"
+    },
+    {
+      "minecraft": "1.21.11",
+      "tier": 1,
+      "spigot": {
+        "available": true,
+        "descriptor": "https://hub.spigotmc.org/versions/1.21.11.json",
+        "javaVersions": [
+          65,
+          70
+        ]
+      },
+      "forge": {
+        "build": "61.2.4",
+        "available": true,
+        "reason": null
+      },
+      "state": "untested"
+    },
+    {
+      "minecraft": "26.1",
+      "tier": 1,
+      "spigot": {
+        "available": true,
+        "descriptor": "https://hub.spigotmc.org/versions/26.1.json",
+        "javaVersions": [
+          69,
+          70
+        ]
+      },
+      "forge": {
+        "build": "62.0.9",
+        "available": true,
+        "reason": null
+      },
+      "state": "untested"
+    },
+    {
+      "minecraft": "26.1.1",
+      "tier": 2,
+      "spigot": {
+        "available": true,
+        "descriptor": "https://hub.spigotmc.org/versions/26.1.1.json",
+        "javaVersions": [
+          69,
+          70
+        ]
+      },
+      "forge": {
+        "build": "63.0.2",
+        "available": true,
+        "reason": null
+      },
+      "state": "untested"
+    },
+    {
+      "minecraft": "26.1.2",
+      "tier": 1,
+      "spigot": {
+        "available": true,
+        "descriptor": "https://hub.spigotmc.org/versions/26.1.2.json",
+        "javaVersions": [
+          69,
+          70
+        ]
+      },
+      "forge": {
+        "build": "64.1.5",
+        "available": true,
+        "reason": null
+      },
+      "state": "untested"
+    },
+    {
+      "minecraft": "26.2",
+      "tier": 1,
+      "spigot": {
+        "available": true,
+        "descriptor": "https://hub.spigotmc.org/versions/26.2.json",
+        "javaVersions": [
+          69,
+          70
+        ]
+      },
+      "forge": {
+        "build": "65.1.5",
+        "available": true,
+        "reason": null
+      },
+      "state": "untested"
+    },
+    {
+      "minecraft": "26.3",
+      "tier": 1,
+      "spigot": {
+        "available": true,
+        "descriptor": "https://hub.spigotmc.org/versions/26.3.json",
+        "javaVersions": [
+          69,
+          70
+        ]
+      },
+      "forge": {
+        "build": "66.1.9",
+        "available": true,
+        "reason": null
+      },
+      "state": "untested"
+    }
+  ]
+}

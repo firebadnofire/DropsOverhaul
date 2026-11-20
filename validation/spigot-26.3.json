@@ -1,0 +1,30 @@
+{
+  "target": "spigot-26.3",
+  "artifact": "DropsOverhaul-spigot-mc1.19-4.2.jar",
+  "sha256": "f3032a132dab545d6f8d89ac2c820dbf259abbf39e44c389d610fc386f837cc2",
+  "platform": "spigot",
+  "minecraft": "26.3",
+  "forgeBuild": null,
+  "serverJava": 25,
+  "javaVersion": "openjdk version \"25.0.5\" 2026-10-20 LTS\nOpenJDK Runtime Environment Temurin-25.0.5+8 (build 25.0.5+8-LTS)\nOpenJDK 64-Bit Server VM Temurin-25.0.5+8 (build 25.0.5+8-LTS, mixed mode, sharing)",
+  "requiredServerJava": 25,
+  "networkTransport": "java-nio",
+  "validationMode": "startup-only",
+  "clientScriptSha256": "0c4655927ca938e31e2e82ad3f613e4b08302b2d4dd873c4e27ae307d9458ded",
+  "runnerSha256": "a325496e780a2fd06123e2c1dda70f9276cf8fd934a07a60fabe4342ec711222",
+  "shutdownHelperSha256": "396a31d8e6eb947cc21618666c32292ce8654e96341d9baaab0c7de3dc9c644c",
+  "protocolHelperSha256": "679082392b1637fd2c46b8af0405528eb9beef401bd6afff8fe214fb5f4f9d58",
+  "testedAtUTC": "2026-11-20T20:38:59.273832+00:00",
+  "state": "startup-tested",
+  "compiled": true,
+  "startup": true,
+  "gameplay": false,
+  "serverVersionLines": [
+    "[15:39:06] [Server thread/INFO]: Starting minecraft server version 26.3",
+    "[15:39:06] [Server thread/INFO]: This server is running Spigot version 4664-Spigot-bed90fc-e89124d (MC: 26.3) (Implementing API version 26.3-R0.1-SNAPSHOT)"
+  ],
+  "configurationProbe": true,
+  "gameplayBlocked": "Pinned Mineflayer 4.39.0 / minecraft-data 3.119.0 has no usable protocol data for Minecraft 26.3. Gameplay and vanilla-client connectivity remain unverified.",
+  "shutdownDurationSeconds": 0.931,
+  "serverExitCode": 0
+}

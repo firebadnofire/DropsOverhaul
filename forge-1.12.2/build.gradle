@@ -1,0 +1,63 @@
+buildscript {
+    repositories {
+        maven { url = 'https://maven.minecraftforge.net/' }
+        mavenCentral()
+        maven { url = 'https://plugins.gradle.org/m2/' }
+    }
+    dependencies {
+        classpath 'net.minecraftforge.gradle:ForgeGradle:3.0.197'
+        classpath 'com.github.jengelman.gradle.plugins:shadow:4.0.4'
+    }
+}
+apply plugin: 'net.minecraftforge.gradle'
+apply plugin: 'java'
+apply plugin: 'com.github.johnrengelman.shadow'
+
+def manifest = new groovy.json.JsonSlurper().parse(file('../versions.json'))
+def target = manifest.artifacts.find { it.id == 'forge-1.12.2' }
+group = 'org.infotoast'
+version = manifest.projectVersion
+sourceCompatibility = targetCompatibility = '1.8'
+minecraft { mappings channel: 'stable', version: '39-1.12' }
+repositories { mavenCentral() }
+configurations { bundled }
+dependencies {
+    minecraft "net.minecraftforge:forge:${target.minecraft}-${target.forgeBuild}"
+    bundled 'org.yaml:snakeyaml:2.5'
+    compile configurations.bundled
+}
+sourceSets.main {
+    java.srcDirs += ['../common/src/main/java', '../forge-common/src/main/java']
+    resources.srcDir '../src/main/resources'
+    resources.exclude 'plugin.yml'
+}
+processResources {
+    inputs.property 'version', project.version
+    filesMatching('mcmod.info') { expand(version: project.version) }
+}
+jar { classifier = 'unshaded-dev' }
+shadowJar {
+    configurations = [project.configurations.bundled]
+    archiveName = target.artifact.replace('{version}', project.version.toString())
+    relocate 'org.yaml.snakeyaml', 'org.infotoast.dropsoverhaul.internal.yaml'
+    // FML 1.12's ASM scanner cannot read Java 9 module descriptors.
+    exclude 'META-INF/versions/**', 'module-info.class'
+}
+reobf { shadowJar {} }
+shadowJar.finalizedBy 'reobfShadowJar'
+build.dependsOn shadowJar
+
+sourceSets {
+    runtimeTest {
+        java.srcDir '../tests/forge-1.12.2/src'
+        resources.srcDir '../tests/forge-1.12.2/resources'
+        compileClasspath += sourceSets.main.output + configurations.compileClasspath
+    }
+}
+task runtimeTestJar(type: Jar) {
+    from sourceSets.runtimeTest.output
+    archiveName = 'DropsOverhaul-runtime-tests.jar'
+    destinationDir = file('build/test-fixtures')
+}
+reobf { runtimeTestJar {} }
+runtimeTestJar.finalizedBy 'reobfRuntimeTestJar'

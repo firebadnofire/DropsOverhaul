@@ -1,0 +1,47 @@
+{
+  "target": "forge-1.21",
+  "artifact": "DropsOverhaul-forge-mc1.21-4.2.jar",
+  "sha256": "975c08fe120e4380deb41c8e675db08dd6d8f5e934a656819ee5a79de3521b0f",
+  "platform": "forge",
+  "minecraft": "1.21",
+  "forgeBuild": "51.0.5",
+  "serverJava": 21,
+  "javaVersion": "openjdk version \"21.0.9\" 2025-10-21 LTS\nOpenJDK Runtime Environment Temurin-21.0.9+10 (build 21.0.9+10-LTS)\nOpenJDK 64-Bit Server VM Temurin-21.0.9+10 (build 21.0.9+10-LTS, mixed mode, sharing)",
+  "requiredServerJava": 21,
+  "clientScriptSha256": "e2fd8d4ae0090d386db9e2b93d902e46241a6c7cc5743ec34901229db4b249d8",
+  "runnerSha256": "e889750298ea8f8151b60a202990d06e2b8ec876c4304db590b4fab7c05a6dbb",
+  "shutdownHelperSha256": "396a31d8e6eb947cc21618666c32292ce8654e96341d9baaab0c7de3dc9c644c",
+  "protocolHelperSha256": "679082392b1637fd2c46b8af0405528eb9beef401bd6afff8fe214fb5f4f9d58",
+  "testedAtUTC": "2026-11-20T19:43:13.838978+00:00",
+  "state": "gameplay-tested",
+  "compiled": true,
+  "startup": true,
+  "gameplay": true,
+  "serverVersionLines": [
+    "[14:43:24] [Server thread/INFO] [minecraft/DedicatedServer]: Starting minecraft server version 1.21"
+  ],
+  "clientWarnings": [
+    {
+      "state": "play",
+      "packet": "declare_recipes",
+      "error": "Read error for undefined : Missing characters in string, found size is 108336 expected size was 114218",
+      "scope": "Mineflayer recipe decoding; crafting is not tested. Drop and inventory assertions use separate packets."
+    }
+  ],
+  "scenarios": [
+    "DO_TEST_PASS commands inventory=1 groundEntities=0",
+    "DO_TEST_PASS selected inventory=1 groundEntities=0",
+    "DO_TEST_PASS unselected inventory=0 groundEntities=1",
+    "DO_TEST_PASS partial inventory=64 groundEntities=0",
+    "DO_TEST_PASS full-keep inventory=0 groundEntities=1",
+    "DO_TEST_PASS full-delete inventory=0 groundEntities=0",
+    "DO_TEST_PASS silk inventory=1 groundEntities=0",
+    "DO_TEST_PASS fortune inventory=2 groundEntities=0",
+    "DO_TEST_PASS custom inventory=3 groundEntities=0",
+    "DO_TEST_PASS creative inventory=0 groundEntities=0",
+    "DO_TEST_PASS cancelled inventory=0 groundEntities=0",
+    "DO_TEST_PASS gamerule inventory=0 groundEntities=0"
+  ],
+  "shutdownDurationSeconds": 0.51,
+  "serverExitCode": 0
+}

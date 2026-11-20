@@ -1,0 +1,1152 @@
+{
+  "schema": 1,
+  "projectVersion": "4.2",
+  "validationStates": [
+    "compiled",
+    "startup-tested",
+    "gameplay-tested",
+    "failed",
+    "blocked",
+    "untested"
+  ],
+  "artifacts": [
+    {
+      "id": "paper-1.21.11",
+      "platform": "paper",
+      "minecraft": "1.21.11",
+      "buildJava": 21,
+      "serverJava": 21,
+      "buildTask": "build",
+      "buildDirectory": ".",
+      "artifact": "DropsOverhaul-paper-mc1.21.11-{version}.jar",
+      "artifactDirectory": "build/libs",
+      "expectedId": "DropsOverhaul",
+      "state": "gameplay-tested",
+      "releaseEligible": true,
+      "releaseReason": "Existing Paper release channel only; this is not a runtime compatibility claim.",
+      "evidence": [
+        "validation/paper-1.21.11.json"
+      ]
+    },
+    {
+      "id": "spigot-1.12.2",
+      "platform": "spigot",
+      "minecraft": "1.12.2",
+      "buildJava": 21,
+      "compilerJava": 8,
+      "serverJava": 8,
+      "buildTask": "build",
+      "buildDirectory": "legacy-spigot",
+      "artifact": "DropsOverhaul-spigot-mc1.12.2-{version}.jar",
+      "artifactDirectory": "legacy-spigot/build/libs",
+      "expectedId": "DropsOverhaul",
+      "state": "gameplay-tested",
+      "releaseEligible": false,
+      "evidence": [
+        "validation/spigot-1.12.2.json"
+      ],
+      "serverRevision": "1.12.2",
+      "nativePackage": "v1_12_R1",
+      "serverDescriptorName": "1573k",
+      "limitations": [
+        "Legacy redirection runs only in Survival. Adventure retains native drops; Adventure parity is not claimed."
+      ]
+    },
+    {
+      "id": "forge-1.12.2",
+      "platform": "forge",
+      "minecraft": "1.12.2",
+      "forgeBuild": "14.23.5.2864",
+      "buildJava": 8,
+      "serverJava": 8,
+      "buildTask": "build",
+      "buildDirectory": "forge-1.12.2",
+      "buildLauncher": "forge-1.12.2/gradlew",
+      "artifact": "DropsOverhaul-forge-mc1.12.2-{version}.jar",
+      "artifactDirectory": "forge-1.12.2/build/libs",
+      "expectedId": "dropsoverhaul",
+      "state": "gameplay-tested",
+      "releaseEligible": false,
+      "evidence": [
+        "validation/forge-1.12.2.json"
+      ]
+    },
+    {
+      "id": "forge-1.21.11",
+      "platform": "forge",
+      "minecraft": "1.21.11",
+      "forgeBuild": "61.2.4",
+      "buildJava": 25,
+      "serverJava": 21,
+      "buildTask": "build",
+      "buildDirectory": "forge-1.21.11",
+      "buildLauncher": "forge-1.21.11/gradlew",
+      "artifact": "DropsOverhaul-forge-mc1.21.11-{version}.jar",
+      "artifactDirectory": "forge-1.21.11/build/libs",
+      "expectedId": "dropsoverhaul",
+      "state": "gameplay-tested",
+      "releaseEligible": false,
+      "evidence": [
+        "validation/forge-1.21.11.json"
+      ],
+      "compilerJava": 21,
+      "externalFixture": true,
+      "nativeTestHooks": true,
+      "forgeEventBus": 7,
+      "overflowApi": "legacy"
+    },
+    {
+      "id": "spigot-1.19",
+      "platform": "spigot",
+      "minecraft": "1.19",
+      "buildJava": 21,
+      "compilerJava": 17,
+      "serverJava": 17,
+      "buildTask": "build",
+      "buildDirectory": "modern-spigot",
+      "artifact": "DropsOverhaul-spigot-mc1.19-{version}.jar",
+      "artifactDirectory": "modern-spigot/build/libs",
+      "expectedId": "DropsOverhaul",
+      "state": "gameplay-tested",
+      "releaseEligible": false,
+      "evidence": [
+        "validation/spigot-1.19.json"
+      ]
+    },
+    {
+      "id": "spigot-1.19.4",
+      "platform": "spigot",
+      "minecraft": "1.19.4",
+      "buildJava": 21,
+      "compilerJava": 17,
+      "serverJava": 17,
+      "buildTask": "build",
+      "buildDirectory": "modern-spigot",
+      "artifact": "DropsOverhaul-spigot-mc1.19-{version}.jar",
+      "artifactDirectory": "modern-spigot/build/libs",
+      "expectedId": "DropsOverhaul",
+      "state": "gameplay-tested",
+      "releaseEligible": false,
+      "evidence": [
+        "validation/spigot-1.19.4.json"
+      ],
+      "binarySource": "spigot-1.19"
+    },
+    {
+      "id": "forge-1.19",
+      "platform": "forge",
+      "minecraft": "1.19",
+      "forgeBuild": "41.1.0",
+      "buildJava": 17,
+      "serverJava": 17,
+      "buildTask": "build",
+      "buildDirectory": "forge-1.19",
+      "buildLauncher": "forge-1.19/gradlew",
+      "artifact": "DropsOverhaul-forge-mc1.19-{version}.jar",
+      "artifactDirectory": "forge-1.19/build/libs",
+      "expectedId": "dropsoverhaul",
+      "state": "gameplay-tested",
+      "releaseEligible": false,
+      "evidence": [
+        "validation/forge-1.19.json"
+      ],
+      "externalFixture": true,
+      "nativeTestHooks": true,
+      "commandFeedback": "component"
+    },
+    {
+      "id": "forge-1.19.4",
+      "platform": "forge",
+      "minecraft": "1.19.4",
+      "forgeBuild": "45.4.0",
+      "buildJava": 17,
+      "serverJava": 17,
+      "buildTask": "build",
+      "buildDirectory": "forge-1.19",
+      "buildLauncher": "forge-1.19/gradlew",
+      "artifact": "DropsOverhaul-forge-mc1.19.4-{version}.jar",
+      "artifactDirectory": "forge-1.19/build/libs",
+      "expectedId": "dropsoverhaul",
+      "state": "gameplay-tested",
+      "releaseEligible": false,
+      "evidence": [
+        "validation/forge-1.19.4.json"
+      ],
+      "externalFixture": true,
+      "nativeTestHooks": true,
+      "commandFeedback": "component"
+    },
+    {
+      "id": "forge-1.20",
+      "platform": "forge",
+      "minecraft": "1.20",
+      "forgeBuild": "46.0.14",
+      "buildJava": 17,
+      "serverJava": 17,
+      "buildTask": "build",
+      "buildDirectory": "forge-1.19",
+      "buildLauncher": "forge-1.19/gradlew",
+      "artifact": "DropsOverhaul-forge-mc1.20-{version}.jar",
+      "artifactDirectory": "forge-1.19/build/libs",
+      "expectedId": "dropsoverhaul",
+      "state": "gameplay-tested",
+      "releaseEligible": false,
+      "evidence": [
+        "validation/forge-1.20.json"
+      ],
+      "externalFixture": true,
+      "nativeTestHooks": true,
+      "commandFeedback": "supplier"
+    },
+    {
+      "id": "spigot-1.19.1",
+      "platform": "spigot",
+      "minecraft": "1.19.1",
+      "buildJava": 21,
+      "compilerJava": 17,
+      "serverJava": 17,
+      "buildTask": "build",
+      "buildDirectory": "modern-spigot",
+      "artifact": "DropsOverhaul-spigot-mc1.19-{version}.jar",
+      "artifactDirectory": "modern-spigot/build/libs",
+      "expectedId": "DropsOverhaul",
+      "state": "compiled",
+      "releaseEligible": false,
+      "evidence": [
+        "validation/spigot-1.19.1.json"
+      ],
+      "binarySource": "spigot-1.19"
+    },
+    {
+      "id": "forge-1.19.1",
+      "platform": "forge",
+      "minecraft": "1.19.1",
+      "forgeBuild": "42.0.9",
+      "buildJava": 17,
+      "serverJava": 17,
+      "buildTask": "build",
+      "buildDirectory": "forge-1.19",
+      "buildLauncher": "forge-1.19/gradlew",
+      "artifact": "DropsOverhaul-forge-mc1.19.1-{version}.jar",
+      "artifactDirectory": "forge-1.19/build/libs",
+      "expectedId": "dropsoverhaul",
+      "state": "untested",
+      "releaseEligible": false,
+      "evidence": [],
+      "externalFixture": true,
+      "nativeTestHooks": true,
+      "commandFeedback": "component"
+    },
+    {
+      "id": "spigot-1.19.2",
+      "platform": "spigot",
+      "minecraft": "1.19.2",
+      "buildJava": 21,
+      "compilerJava": 17,
+      "serverJava": 17,
+      "buildTask": "build",
+      "buildDirectory": "modern-spigot",
+      "artifact": "DropsOverhaul-spigot-mc1.19-{version}.jar",
+      "artifactDirectory": "modern-spigot/build/libs",
+      "expectedId": "DropsOverhaul",
+      "state": "compiled",
+      "releaseEligible": false,
+      "evidence": [
+        "validation/spigot-1.19.2.json"
+      ],
+      "binarySource": "spigot-1.19"
+    },
+    {
+      "id": "forge-1.19.2",
+      "platform": "forge",
+      "minecraft": "1.19.2",
+      "forgeBuild": "43.5.0",
+      "buildJava": 17,
+      "serverJava": 17,
+      "buildTask": "build",
+      "buildDirectory": "forge-1.19",
+      "buildLauncher": "forge-1.19/gradlew",
+      "artifact": "DropsOverhaul-forge-mc1.19.2-{version}.jar",
+      "artifactDirectory": "forge-1.19/build/libs",
+      "expectedId": "dropsoverhaul",
+      "state": "untested",
+      "releaseEligible": false,
+      "evidence": [],
+      "externalFixture": true,
+      "nativeTestHooks": true,
+      "commandFeedback": "component"
+    },
+    {
+      "id": "spigot-1.19.3",
+      "platform": "spigot",
+      "minecraft": "1.19.3",
+      "buildJava": 21,
+      "compilerJava": 17,
+      "serverJava": 17,
+      "buildTask": "build",
+      "buildDirectory": "modern-spigot",
+      "artifact": "DropsOverhaul-spigot-mc1.19-{version}.jar",
+      "artifactDirectory": "modern-spigot/build/libs",
+      "expectedId": "DropsOverhaul",
+      "state": "compiled",
+      "releaseEligible": false,
+      "evidence": [
+        "validation/spigot-1.19.3.json"
+      ],
+      "binarySource": "spigot-1.19"
+    },
+    {
+      "id": "forge-1.19.3",
+      "platform": "forge",
+      "minecraft": "1.19.3",
+      "forgeBuild": "44.1.0",
+      "buildJava": 17,
+      "serverJava": 17,
+      "buildTask": "build",
+      "buildDirectory": "forge-1.19",
+      "buildLauncher": "forge-1.19/gradlew",
+      "artifact": "DropsOverhaul-forge-mc1.19.3-{version}.jar",
+      "artifactDirectory": "forge-1.19/build/libs",
+      "expectedId": "dropsoverhaul",
+      "state": "untested",
+      "releaseEligible": false,
+      "evidence": [],
+      "externalFixture": true,
+      "nativeTestHooks": true,
+      "commandFeedback": "component"
+    },
+    {
+      "id": "spigot-1.20",
+      "platform": "spigot",
+      "minecraft": "1.20",
+      "buildJava": 21,
+      "compilerJava": 17,
+      "serverJava": 17,
+      "buildTask": "build",
+      "buildDirectory": "modern-spigot",
+      "artifact": "DropsOverhaul-spigot-mc1.19-{version}.jar",
+      "artifactDirectory": "modern-spigot/build/libs",
+      "expectedId": "DropsOverhaul",
+      "state": "gameplay-tested",
+      "releaseEligible": false,
+      "evidence": [
+        "validation/spigot-1.20.json"
+      ],
+      "binarySource": "spigot-1.19",
+      "serverRevision": "3790"
+    },
+    {
+      "id": "forge-1.20.6",
+      "platform": "forge",
+      "minecraft": "1.20.6",
+      "forgeBuild": "50.2.14",
+      "buildJava": 25,
+      "serverJava": 21,
+      "buildTask": "build",
+      "buildDirectory": "forge-1.21.11",
+      "buildLauncher": "forge-1.21.11/gradlew",
+      "artifact": "DropsOverhaul-forge-mc1.20.6-{version}.jar",
+      "artifactDirectory": "forge-1.21.11/build/libs",
+      "expectedId": "dropsoverhaul",
+      "state": "gameplay-tested",
+      "releaseEligible": false,
+      "evidence": [
+        "validation/forge-1.20.6.json"
+      ],
+      "compilerJava": 21,
+      "externalFixture": true,
+      "nativeTestHooks": true,
+      "forgeEventBus": 6,
+      "commandFeedback": "supplier"
+    },
+    {
+      "id": "spigot-1.20.5",
+      "platform": "spigot",
+      "minecraft": "1.20.5",
+      "buildJava": 21,
+      "compilerJava": 17,
+      "serverJava": 21,
+      "buildTask": "build",
+      "buildDirectory": "modern-spigot",
+      "artifact": "DropsOverhaul-spigot-mc1.19-{version}.jar",
+      "artifactDirectory": "modern-spigot/build/libs",
+      "expectedId": "DropsOverhaul",
+      "state": "gameplay-tested",
+      "releaseEligible": false,
+      "evidence": [
+        "validation/spigot-1.20.5.json"
+      ],
+      "binarySource": "spigot-1.19",
+      "serverRevision": "4130"
+    },
+    {
+      "id": "spigot-1.20.6",
+      "platform": "spigot",
+      "minecraft": "1.20.6",
+      "buildJava": 21,
+      "compilerJava": 17,
+      "serverJava": 21,
+      "buildTask": "build",
+      "buildDirectory": "modern-spigot",
+      "artifact": "DropsOverhaul-spigot-mc1.19-{version}.jar",
+      "artifactDirectory": "modern-spigot/build/libs",
+      "expectedId": "DropsOverhaul",
+      "state": "gameplay-tested",
+      "releaseEligible": false,
+      "evidence": [
+        "validation/spigot-1.20.6.json"
+      ],
+      "binarySource": "spigot-1.19",
+      "serverRevision": "1.20.6"
+    },
+    {
+      "id": "forge-1.21",
+      "platform": "forge",
+      "minecraft": "1.21",
+      "forgeBuild": "51.0.5",
+      "buildJava": 25,
+      "serverJava": 21,
+      "buildTask": "build",
+      "buildDirectory": "forge-1.21.11",
+      "buildLauncher": "forge-1.21.11/gradlew",
+      "artifact": "DropsOverhaul-forge-mc1.21-{version}.jar",
+      "artifactDirectory": "forge-1.21.11/build/libs",
+      "expectedId": "dropsoverhaul",
+      "state": "gameplay-tested",
+      "releaseEligible": false,
+      "evidence": [
+        "validation/forge-1.21.json"
+      ],
+      "compilerJava": 21,
+      "externalFixture": true,
+      "nativeTestHooks": true,
+      "forgeEventBus": 6,
+      "commandFeedback": "supplier",
+      "exactForgeBuild": true,
+      "knownFailures": [
+        "validation/forge-1.21-forge51.0.33-failed.json"
+      ],
+      "limitations": [
+        "Requires exactly Forge 51.0.5. Forge 51.0.33 passed gameplay but failed clean shutdown; the configuration-watcher hang was reproduced without DropsOverhaul. See validation/forge-1.21-forge51.0.33-failed.json.",
+        "Mineflayer reports a declare_recipes decoder warning on 1.21; crafting is outside the tested drop/inventory/command scenarios. Other packet decoder failures fail validation."
+      ]
+    },
+    {
+      "id": "spigot-1.21",
+      "platform": "spigot",
+      "minecraft": "1.21",
+      "buildJava": 21,
+      "compilerJava": 17,
+      "serverJava": 21,
+      "buildTask": "build",
+      "buildDirectory": "modern-spigot",
+      "artifact": "DropsOverhaul-spigot-mc1.19-{version}.jar",
+      "artifactDirectory": "modern-spigot/build/libs",
+      "expectedId": "DropsOverhaul",
+      "state": "gameplay-tested",
+      "releaseEligible": false,
+      "evidence": [
+        "validation/spigot-1.21.json"
+      ],
+      "binarySource": "spigot-1.19",
+      "serverRevision": "4260",
+      "limitations": [
+        "The runtime client reports a recipe-packet decoding warning on Minecraft 1.21; crafting is not covered by these drop and inventory tests."
+      ]
+    },
+    {
+      "id": "spigot-1.21.11",
+      "platform": "spigot",
+      "minecraft": "1.21.11",
+      "buildJava": 21,
+      "compilerJava": 17,
+      "serverJava": 21,
+      "buildTask": "build",
+      "buildDirectory": "modern-spigot",
+      "artifact": "DropsOverhaul-spigot-mc1.19-{version}.jar",
+      "artifactDirectory": "modern-spigot/build/libs",
+      "expectedId": "DropsOverhaul",
+      "state": "gameplay-tested",
+      "releaseEligible": false,
+      "evidence": [
+        "validation/spigot-1.21.11.json"
+      ],
+      "binarySource": "spigot-1.19",
+      "serverRevision": "1.21.11"
+    },
+    {
+      "id": "forge-26.1",
+      "platform": "forge",
+      "minecraft": "26.1",
+      "forgeBuild": "62.0.9",
+      "buildJava": 25,
+      "serverJava": 25,
+      "buildTask": "build",
+      "buildDirectory": "forge-1.21.11",
+      "buildLauncher": "forge-1.21.11/gradlew",
+      "artifact": "DropsOverhaul-forge-mc26.1-{version}.jar",
+      "artifactDirectory": "forge-1.21.11/build/libs",
+      "expectedId": "dropsoverhaul",
+      "state": "gameplay-tested",
+      "releaseEligible": false,
+      "evidence": [
+        "validation/forge-26.1.json"
+      ],
+      "compilerJava": 25,
+      "externalFixture": true,
+      "nativeTestHooks": true,
+      "forgeEventBus": 7,
+      "forgeGradle": "7.0.17",
+      "minecraftMappings": "none",
+      "overflowApi": "legacy"
+    },
+    {
+      "id": "spigot-26.1",
+      "platform": "spigot",
+      "minecraft": "26.1",
+      "buildJava": 21,
+      "compilerJava": 17,
+      "serverJava": 25,
+      "buildTask": "build",
+      "buildDirectory": "modern-spigot",
+      "artifact": "DropsOverhaul-spigot-mc1.19-{version}.jar",
+      "artifactDirectory": "modern-spigot/build/libs",
+      "expectedId": "DropsOverhaul",
+      "state": "gameplay-tested",
+      "releaseEligible": false,
+      "evidence": [
+        "validation/spigot-26.1.json"
+      ],
+      "binarySource": "spigot-1.19",
+      "serverRevision": "4610"
+    },
+    {
+      "id": "forge-26.1.2",
+      "platform": "forge",
+      "minecraft": "26.1.2",
+      "forgeBuild": "64.1.5",
+      "buildJava": 25,
+      "serverJava": 25,
+      "buildTask": "build",
+      "buildDirectory": "forge-1.21.11",
+      "buildLauncher": "forge-1.21.11/gradlew",
+      "artifact": "DropsOverhaul-forge-mc26.1.2-{version}.jar",
+      "artifactDirectory": "forge-1.21.11/build/libs",
+      "expectedId": "dropsoverhaul",
+      "state": "gameplay-tested",
+      "releaseEligible": false,
+      "evidence": [
+        "validation/forge-26.1.2.json"
+      ],
+      "compilerJava": 25,
+      "externalFixture": true,
+      "nativeTestHooks": true,
+      "forgeEventBus": 7,
+      "forgeGradle": "7.0.17",
+      "minecraftMappings": "none",
+      "overflowApi": "legacy"
+    },
+    {
+      "id": "spigot-26.1.2",
+      "platform": "spigot",
+      "minecraft": "26.1.2",
+      "buildJava": 21,
+      "compilerJava": 17,
+      "serverJava": 25,
+      "buildTask": "build",
+      "buildDirectory": "modern-spigot",
+      "artifact": "DropsOverhaul-spigot-mc1.19-{version}.jar",
+      "artifactDirectory": "modern-spigot/build/libs",
+      "expectedId": "DropsOverhaul",
+      "state": "gameplay-tested",
+      "releaseEligible": false,
+      "evidence": [
+        "validation/spigot-26.1.2.json"
+      ],
+      "binarySource": "spigot-1.19",
+      "serverRevision": "26.1.2"
+    },
+    {
+      "id": "forge-26.2",
+      "platform": "forge",
+      "minecraft": "26.2",
+      "forgeBuild": "65.1.5",
+      "buildJava": 25,
+      "serverJava": 25,
+      "buildTask": "build",
+      "buildDirectory": "forge-1.21.11",
+      "buildLauncher": "forge-1.21.11/gradlew",
+      "artifact": "DropsOverhaul-forge-mc26.2-{version}.jar",
+      "artifactDirectory": "forge-1.21.11/build/libs",
+      "expectedId": "dropsoverhaul",
+      "state": "startup-tested",
+      "releaseEligible": false,
+      "evidence": [
+        "validation/forge-26.2.json"
+      ],
+      "compilerJava": 25,
+      "externalFixture": true,
+      "nativeTestHooks": true,
+      "forgeEventBus": 7,
+      "forgeGradle": "7.0.17",
+      "minecraftMappings": "none",
+      "validationMode": "startup-only",
+      "gameplayBlocker": "Pinned Mineflayer 4.39.0 / minecraft-data 3.119.0 has no usable protocol data for Minecraft 26.2. Gameplay and vanilla-client connectivity remain unverified.",
+      "limitations": [
+        "Pinned Mineflayer 4.39.0 / minecraft-data 3.119.0 has no usable protocol data for Minecraft 26.2. Gameplay and vanilla-client connectivity remain unverified."
+      ],
+      "overflowApi": "legacy"
+    },
+    {
+      "id": "spigot-26.2",
+      "platform": "spigot",
+      "minecraft": "26.2",
+      "buildJava": 21,
+      "compilerJava": 17,
+      "serverJava": 25,
+      "buildTask": "build",
+      "buildDirectory": "modern-spigot",
+      "artifact": "DropsOverhaul-spigot-mc1.19-{version}.jar",
+      "artifactDirectory": "modern-spigot/build/libs",
+      "expectedId": "DropsOverhaul",
+      "state": "startup-tested",
+      "releaseEligible": false,
+      "evidence": [
+        "validation/spigot-26.2.json"
+      ],
+      "binarySource": "spigot-1.19",
+      "serverRevision": "26.2",
+      "validationMode": "startup-only",
+      "gameplayBlocker": "Pinned Mineflayer 4.39.0 / minecraft-data 3.119.0 has no usable protocol data for Minecraft 26.2. Gameplay and vanilla-client connectivity remain unverified.",
+      "limitations": [
+        "Pinned Mineflayer 4.39.0 / minecraft-data 3.119.0 has no usable protocol data for Minecraft 26.2. Gameplay and vanilla-client connectivity remain unverified."
+      ]
+    },
+    {
+      "id": "forge-26.3",
+      "platform": "forge",
+      "minecraft": "26.3",
+      "forgeBuild": "66.1.9",
+      "buildJava": 25,
+      "serverJava": 25,
+      "buildTask": "build",
+      "buildDirectory": "forge-1.21.11",
+      "buildLauncher": "forge-1.21.11/gradlew",
+      "artifact": "DropsOverhaul-forge-mc26.3-{version}.jar",
+      "artifactDirectory": "forge-1.21.11/build/libs",
+      "expectedId": "dropsoverhaul",
+      "state": "startup-tested",
+      "releaseEligible": false,
+      "evidence": [
+        "validation/forge-26.3.json"
+      ],
+      "compilerJava": 25,
+      "externalFixture": true,
+      "nativeTestHooks": true,
+      "forgeEventBus": 7,
+      "forgeGradle": "7.0.17",
+      "minecraftMappings": "none",
+      "validationMode": "startup-only",
+      "gameplayBlocker": "Pinned Mineflayer 4.39.0 / minecraft-data 3.119.0 has no usable protocol data for Minecraft 26.3. Gameplay and vanilla-client connectivity remain unverified.",
+      "limitations": [
+        "Pinned Mineflayer 4.39.0 / minecraft-data 3.119.0 has no usable protocol data for Minecraft 26.3. Gameplay and vanilla-client connectivity remain unverified."
+      ],
+      "overflowApi": "prediction"
+    },
+    {
+      "id": "spigot-26.3",
+      "platform": "spigot",
+      "minecraft": "26.3",
+      "buildJava": 21,
+      "compilerJava": 17,
+      "serverJava": 25,
+      "buildTask": "build",
+      "buildDirectory": "modern-spigot",
+      "artifact": "DropsOverhaul-spigot-mc1.19-{version}.jar",
+      "artifactDirectory": "modern-spigot/build/libs",
+      "expectedId": "DropsOverhaul",
+      "state": "startup-tested",
+      "releaseEligible": false,
+      "evidence": [
+        "validation/spigot-26.3.json"
+      ],
+      "binarySource": "spigot-1.19",
+      "serverRevision": "26.3",
+      "validationMode": "startup-only",
+      "gameplayBlocker": "Pinned Mineflayer 4.39.0 / minecraft-data 3.119.0 has no usable protocol data for Minecraft 26.3. Gameplay and vanilla-client connectivity remain unverified.",
+      "limitations": [
+        "Pinned Mineflayer 4.39.0 / minecraft-data 3.119.0 has no usable protocol data for Minecraft 26.3. Gameplay and vanilla-client connectivity remain unverified."
+      ]
+    }
+  ],
+  "planned": [],
+  "versionGroups": [
+    "1.19",
+    "1.20",
+    "1.21",
+    "26.1",
+    "26.2",
+    "26.3"
+  ],
+  "tier1Boundaries": [
+    "1.12.2",
+    "1.20.5",
+    "1.20.6",
+    "1.21.11"
+  ],
+  "tier2": "manual-only; exact released patches discovered separately; no implicit compatibility",
+  "candidates": [
+    {
+      "platform": "paper",
+      "minecraft": "1.21.11",
+      "tier": 1,
+      "artifactId": "paper-1.21.11"
+    },
+    {
+      "platform": "spigot",
+      "minecraft": "1.12.2",
+      "tier": 1,
+      "artifactId": "spigot-1.12.2"
+    },
+    {
+      "platform": "forge",
+      "minecraft": "1.12.2",
+      "tier": 1,
+      "artifactId": "forge-1.12.2"
+    },
+    {
+      "platform": "spigot",
+      "minecraft": "1.19",
+      "tier": 1,
+      "artifactId": "spigot-1.19"
+    },
+    {
+      "platform": "forge",
+      "minecraft": "1.19",
+      "tier": 1,
+      "artifactId": "forge-1.19"
+    },
+    {
+      "platform": "spigot",
+      "minecraft": "1.19.1",
+      "tier": 2,
+      "artifactId": "spigot-1.19.1"
+    },
+    {
+      "platform": "forge",
+      "minecraft": "1.19.1",
+      "tier": 2,
+      "artifactId": "forge-1.19.1"
+    },
+    {
+      "platform": "spigot",
+      "minecraft": "1.19.2",
+      "tier": 2,
+      "artifactId": "spigot-1.19.2"
+    },
+    {
+      "platform": "forge",
+      "minecraft": "1.19.2",
+      "tier": 2,
+      "artifactId": "forge-1.19.2"
+    },
+    {
+      "platform": "spigot",
+      "minecraft": "1.19.3",
+      "tier": 2,
+      "artifactId": "spigot-1.19.3"
+    },
+    {
+      "platform": "forge",
+      "minecraft": "1.19.3",
+      "tier": 2,
+      "artifactId": "forge-1.19.3"
+    },
+    {
+      "platform": "spigot",
+      "minecraft": "1.19.4",
+      "tier": 1,
+      "artifactId": "spigot-1.19.4"
+    },
+    {
+      "platform": "forge",
+      "minecraft": "1.19.4",
+      "tier": 1,
+      "artifactId": "forge-1.19.4"
+    },
+    {
+      "platform": "spigot",
+      "minecraft": "1.20",
+      "tier": 1,
+      "artifactId": "spigot-1.20",
+      "serverRevision": "3790"
+    },
+    {
+      "platform": "forge",
+      "minecraft": "1.20",
+      "tier": 1,
+      "artifactId": "forge-1.20"
+    },
+    {
+      "platform": "spigot",
+      "minecraft": "1.20.1",
+      "tier": 2,
+      "artifactId": null,
+      "state": "untested",
+      "releaseEligible": false
+    },
+    {
+      "platform": "forge",
+      "minecraft": "1.20.1",
+      "tier": 2,
+      "artifactId": null,
+      "state": "untested",
+      "releaseEligible": false,
+      "forgeBuild": "47.4.28"
+    },
+    {
+      "platform": "spigot",
+      "minecraft": "1.20.2",
+      "tier": 2,
+      "artifactId": null,
+      "state": "untested",
+      "releaseEligible": false
+    },
+    {
+      "platform": "forge",
+      "minecraft": "1.20.2",
+      "tier": 2,
+      "artifactId": null,
+      "state": "untested",
+      "releaseEligible": false,
+      "forgeBuild": "48.1.0"
+    },
+    {
+      "platform": "spigot",
+      "minecraft": "1.20.3",
+      "tier": 2,
+      "artifactId": null,
+      "state": "untested",
+      "releaseEligible": false
+    },
+    {
+      "platform": "forge",
+      "minecraft": "1.20.3",
+      "tier": 2,
+      "artifactId": null,
+      "state": "untested",
+      "releaseEligible": false,
+      "forgeBuild": "49.0.2"
+    },
+    {
+      "platform": "spigot",
+      "minecraft": "1.20.4",
+      "tier": 2,
+      "artifactId": null,
+      "state": "untested",
+      "releaseEligible": false
+    },
+    {
+      "platform": "forge",
+      "minecraft": "1.20.4",
+      "tier": 2,
+      "artifactId": null,
+      "state": "untested",
+      "releaseEligible": false,
+      "forgeBuild": "49.2.13"
+    },
+    {
+      "platform": "spigot",
+      "minecraft": "1.20.5",
+      "tier": 1,
+      "artifactId": "spigot-1.20.5",
+      "releaseEligible": false
+    },
+    {
+      "platform": "forge",
+      "minecraft": "1.20.5",
+      "tier": 1,
+      "artifactId": null,
+      "state": "blocked",
+      "releaseEligible": false,
+      "forgeBuild": null,
+      "reason": "No exact Minecraft version in Forge Maven metadata"
+    },
+    {
+      "platform": "spigot",
+      "minecraft": "1.20.6",
+      "tier": 1,
+      "artifactId": "spigot-1.20.6",
+      "releaseEligible": false
+    },
+    {
+      "platform": "forge",
+      "minecraft": "1.20.6",
+      "tier": 1,
+      "artifactId": "forge-1.20.6",
+      "releaseEligible": false
+    },
+    {
+      "platform": "spigot",
+      "minecraft": "1.21",
+      "tier": 1,
+      "artifactId": "spigot-1.21",
+      "releaseEligible": false
+    },
+    {
+      "platform": "forge",
+      "minecraft": "1.21",
+      "tier": 1,
+      "artifactId": "forge-1.21",
+      "releaseEligible": false
+    },
+    {
+      "platform": "spigot",
+      "minecraft": "1.21.1",
+      "tier": 2,
+      "artifactId": null,
+      "state": "untested",
+      "releaseEligible": false
+    },
+    {
+      "platform": "forge",
+      "minecraft": "1.21.1",
+      "tier": 2,
+      "artifactId": null,
+      "state": "untested",
+      "releaseEligible": false,
+      "forgeBuild": "52.1.20"
+    },
+    {
+      "platform": "spigot",
+      "minecraft": "1.21.2",
+      "tier": 2,
+      "artifactId": null,
+      "state": "untested",
+      "releaseEligible": false
+    },
+    {
+      "platform": "forge",
+      "minecraft": "1.21.2",
+      "tier": 2,
+      "artifactId": null,
+      "state": "blocked",
+      "releaseEligible": false,
+      "forgeBuild": null,
+      "reason": "No exact Minecraft version in Forge Maven metadata"
+    },
+    {
+      "platform": "spigot",
+      "minecraft": "1.21.3",
+      "tier": 2,
+      "artifactId": null,
+      "state": "untested",
+      "releaseEligible": false
+    },
+    {
+      "platform": "forge",
+      "minecraft": "1.21.3",
+      "tier": 2,
+      "artifactId": null,
+      "state": "untested",
+      "releaseEligible": false,
+      "forgeBuild": "53.1.16"
+    },
+    {
+      "platform": "spigot",
+      "minecraft": "1.21.4",
+      "tier": 2,
+      "artifactId": null,
+      "state": "untested",
+      "releaseEligible": false
+    },
+    {
+      "platform": "forge",
+      "minecraft": "1.21.4",
+      "tier": 2,
+      "artifactId": null,
+      "state": "untested",
+      "releaseEligible": false,
+      "forgeBuild": "54.1.22"
+    },
+    {
+      "platform": "spigot",
+      "minecraft": "1.21.5",
+      "tier": 2,
+      "artifactId": null,
+      "state": "untested",
+      "releaseEligible": false
+    },
+    {
+      "platform": "forge",
+      "minecraft": "1.21.5",
+      "tier": 2,
+      "artifactId": null,
+      "state": "untested",
+      "releaseEligible": false,
+      "forgeBuild": "55.1.18"
+    },
+    {
+      "platform": "spigot",
+      "minecraft": "1.21.6",
+      "tier": 2,
+      "artifactId": null,
+      "state": "untested",
+      "releaseEligible": false
+    },
+    {
+      "platform": "forge",
+      "minecraft": "1.21.6",
+      "tier": 2,
+      "artifactId": null,
+      "state": "untested",
+      "releaseEligible": false,
+      "forgeBuild": "56.0.9"
+    },
+    {
+      "platform": "spigot",
+      "minecraft": "1.21.7",
+      "tier": 2,
+      "artifactId": null,
+      "state": "untested",
+      "releaseEligible": false
+    },
+    {
+      "platform": "forge",
+      "minecraft": "1.21.7",
+      "tier": 2,
+      "artifactId": null,
+      "state": "untested",
+      "releaseEligible": false,
+      "forgeBuild": "57.0.3"
+    },
+    {
+      "platform": "spigot",
+      "minecraft": "1.21.8",
+      "tier": 2,
+      "artifactId": null,
+      "state": "untested",
+      "releaseEligible": false
+    },
+    {
+      "platform": "forge",
+      "minecraft": "1.21.8",
+      "tier": 2,
+      "artifactId": null,
+      "state": "untested",
+      "releaseEligible": false,
+      "forgeBuild": "58.1.26"
+    },
+    {
+      "platform": "spigot",
+      "minecraft": "1.21.9",
+      "tier": 2,
+      "artifactId": null,
+      "state": "untested",
+      "releaseEligible": false
+    },
+    {
+      "platform": "forge",
+      "minecraft": "1.21.9",
+      "tier": 2,
+      "artifactId": null,
+      "state": "untested",
+      "releaseEligible": false,
+      "forgeBuild": "59.0.5"
+    },
+    {
+      "platform": "spigot",
+      "minecraft": "1.21.10",
+      "tier": 2,
+      "artifactId": null,
+      "state": "untested",
+      "releaseEligible": false
+    },
+    {
+      "platform": "forge",
+      "minecraft": "1.21.10",
+      "tier": 2,
+      "artifactId": null,
+      "state": "untested",
+      "releaseEligible": false,
+      "forgeBuild": "60.1.18"
+    },
+    {
+      "platform": "spigot",
+      "minecraft": "1.21.11",
+      "tier": 1,
+      "artifactId": "spigot-1.21.11"
+    },
+    {
+      "platform": "forge",
+      "minecraft": "1.21.11",
+      "tier": 1,
+      "artifactId": "forge-1.21.11"
+    },
+    {
+      "platform": "spigot",
+      "minecraft": "26.1",
+      "tier": 1,
+      "artifactId": "spigot-26.1"
+    },
+    {
+      "platform": "forge",
+      "minecraft": "26.1",
+      "tier": 1,
+      "artifactId": "forge-26.1"
+    },
+    {
+      "platform": "spigot",
+      "minecraft": "26.1.1",
+      "tier": 2,
+      "artifactId": null,
+      "state": "untested",
+      "releaseEligible": false
+    },
+    {
+      "platform": "forge",
+      "minecraft": "26.1.1",
+      "tier": 2,
+      "artifactId": null,
+      "state": "untested",
+      "releaseEligible": false,
+      "forgeBuild": "63.0.2"
+    },
+    {
+      "platform": "spigot",
+      "minecraft": "26.1.2",
+      "tier": 1,
+      "artifactId": "spigot-26.1.2"
+    },
+    {
+      "platform": "forge",
+      "minecraft": "26.1.2",
+      "tier": 1,
+      "artifactId": "forge-26.1.2"
+    },
+    {
+      "platform": "spigot",
+      "minecraft": "26.2",
+      "tier": 1,
+      "artifactId": "spigot-26.2"
+    },
+    {
+      "platform": "forge",
+      "minecraft": "26.2",
+      "tier": 1,
+      "artifactId": "forge-26.2"
+    },
+    {
+      "platform": "spigot",
+      "minecraft": "26.3",
+      "tier": 1,
+      "artifactId": "spigot-26.3"
+    },
+    {
+      "platform": "forge",
+      "minecraft": "26.3",
+      "tier": 1,
+      "artifactId": "forge-26.3"
+    }
+  ]
+}

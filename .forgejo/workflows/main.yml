@@ -19,15 +19,16 @@ jobs:
           distribution: temurin
           java-version: '21'
       - run: ./gradlew build --no-daemon
-      - name: Collect plugin distributions
+      - name: Collect eligible distributions
         shell: bash
         run: |
           set -euo pipefail
+          ./gradlew stageReleaseArtifacts --no-daemon
           mkdir -p dist
-          for file in build/libs/*.jar; do
+          for file in build/release-dist/*.jar; do
             case "$file" in *-sources.jar|*-javadoc.jar|*-tests.jar) continue ;; esac
             [ -f "$file" ] || continue
-            jar tf "$file" | grep -qx plugin.yml
+            jar tf "$file" | grep -Ex 'plugin\.yml|META-INF/mods\.toml|mcmod\.info' >/dev/null
             cp "$file" dist/
           done
           compgen -G 'dist/*.jar' >/dev/null

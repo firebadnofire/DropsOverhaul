@@ -1,0 +1,8 @@
+modLoader="javafml"
+loaderVersion="[61,)"
+license="All Rights Reserved"
+[[mods]]
+modId="dropsoverhaul_tests"
+version="1"
+displayName="DropsOverhaul runtime test hooks"
+displayTest="IGNORE_ALL_VERSION"

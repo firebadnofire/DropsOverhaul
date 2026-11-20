@@ -1,0 +1,9 @@
+{
+  "target": "spigot-1.19.3",
+  "state": "compiled",
+  "compiled": true,
+  "artifact": "DropsOverhaul-spigot-mc1.19-4.2.jar",
+  "sha256": "f3032a132dab545d6f8d89ac2c820dbf259abbf39e44c389d610fc386f837cc2",
+  "metadata": "valid",
+  "maximumClassVersion": 61
+}

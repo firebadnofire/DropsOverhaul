@@ -4,7 +4,43 @@ plugins {
 }
 
 group = 'org.infotoast'
-version = '4.2'
+def targets = new groovy.json.JsonSlurper().parse(file('versions.json'))
+version = targets.projectVersion
+def paperTarget = targets.artifacts.find { it.id == 'paper-1.21.11' }
+sourceSets.main.java.srcDir 'common/src/main/java'
+tasks.named('jar') {
+    archiveFileName = paperTarget.artifact.replace('{version}', project.version.toString())
+}
+
+tasks.register('stageReleaseArtifacts') {
+    dependsOn 'build'
+    doLast {
+        def eligible = targets.artifacts.findAll { it.releaseEligible }
+        if (eligible.empty) throw new GradleException('No explicitly release-eligible artifacts')
+        def destination = layout.buildDirectory.dir('release-dist').get().asFile
+        delete destination
+        destination.mkdirs()
+        eligible.each { target ->
+            // The existing release channel is preserved; new targets require gameplay evidence.
+            if (target.id != 'paper-1.21.11' && target.state != 'gameplay-tested') {
+                throw new GradleException("Release target ${target.id} has no gameplay validation")
+            }
+            def artifact = file("${target.artifactDirectory}/${target.artifact.replace('{version}', project.version.toString())}")
+            if (!artifact.isFile()) throw new GradleException("Missing eligible artifact: ${artifact}")
+            if (target.id != 'paper-1.21.11') {
+                def evidencePaths = target.evidence ?: []
+                if (evidencePaths.empty) throw new GradleException("No evidence for ${target.id}")
+                def evidence = new groovy.json.JsonSlurper().parse(file(evidencePaths.first()))
+                def digest = java.security.MessageDigest.getInstance('SHA-256').digest(artifact.bytes).encodeHex().toString()
+                if (evidence.target != target.id || evidence.sha256 != digest || evidence.state != 'gameplay-tested' ||
+                        !evidence.startup || !evidence.gameplay || evidence.serverExitCode != 0) {
+                    throw new GradleException("Release evidence does not validate the exact current artifact: ${target.id}")
+                }
+            }
+            copy { from artifact; into destination }
+        }
+    }
+}
 
 repositories {
     mavenCentral()
@@ -19,7 +55,33 @@ repositories {
 }
 
 dependencies {
-    compileOnly 'io.papermc.paper:paper-api:1.21.11-R0.1-SNAPSHOT'
+    compileOnly "io.papermc.paper:paper-api:${paperTarget.minecraft}-R0.1-SNAPSHOT"
+    testImplementation 'org.junit.jupiter:junit-jupiter:5.11.4'
+    testRuntimeOnly 'org.junit.platform:junit-platform-launcher'
+}
+
+tasks.named('test') { useJUnitPlatform() }
+
+// Compile the shared sources separately to enforce the legacy Java 8 contract.
+tasks.register('checkCommonJava8', JavaCompile) {
+    source = fileTree('common/src/main/java') { include '**/*.java' }
+    classpath = files()
+    destinationDirectory = layout.buildDirectory.dir('common-java8')
+    options.release = 8
+}
+tasks.named('check') { dependsOn 'checkCommonJava8' }
+
+sourceSets {
+    runtimeTest {
+        java.srcDir 'tests/paper/src'
+        resources.srcDir 'tests/paper/resources'
+        compileClasspath += sourceSets.main.output + configurations.compileClasspath
+    }
+}
+tasks.register('runtimeTestJar', Jar) {
+    archiveFileName = 'DropsOverhaul-runtime-tests.jar'
+    destinationDirectory = layout.buildDirectory.dir('test-fixtures')
+    from sourceSets.runtimeTest.output
 }
 
 def targetJavaVersion = 21
@@ -49,7 +111,7 @@ processResources {
 
 tasks {
     runServer {
-        minecraftVersion("1.21.11")
+        minecraftVersion(paperTarget.minecraft)
     }
 }
 

@@ -1,0 +1,207 @@
+# Explicit manifest targets run gameplay fixtures; exploratory targets are startup-only.
+name: Minecraft compatibility test
+
+on:
+  workflow_dispatch:
+    inputs:
+      server_type:
+        description: 'Server implementation to boot'
+        type: choice
+        required: true
+        default: paper
+        options:
+          - paper
+          - spigot
+          - forge
+      mc_version:
+        description: 'Minecraft version (auto = current repo target; e.g. 1.12.2, 1.21.11, 26.3)'
+        type: string
+        required: true
+        default: auto
+      build_task:
+        description: 'One Gradle task to build the artifact'
+        type: string
+        required: true
+        default: auto
+      artifact_path:
+        description: 'Optional exact path to a plugin/mod JAR; blank = auto-detect'
+        type: string
+        required: false
+        default: ''
+      forge_build:
+        description: 'Optional exact Forge build number; blank = latest/recommended'
+        type: string
+        required: false
+        default: ''
+      build_java:
+        description: 'JDK for Gradle: auto, 8, 17, 21, or 25'
+        type: string
+        required: true
+        default: auto
+      server_java:
+        description: 'JDK for Minecraft: auto, 8, 16, 17, 21, or 25'
+        type: string
+        required: true
+        default: auto
+      expected_id:
+        description: 'Optional plugin name / Forge mod ID to verify'
+        type: string
+        required: false
+        default: ''
+      startup_timeout:
+        description: 'Seconds allowed for server startup'
+        type: number
+        required: true
+        default: 600
+
+jobs:
+  smoke-test:
+    runs-on: ubuntu-latest
+    # Existing runner's ubuntu-latest label must provide a container job.
+    # Node is present for Forgejo JavaScript-based actions.
+    container:
+      image: node:24-bookworm
+    timeout-minutes: 90
+    env:
+      SERVER_TYPE: ${{ inputs.server_type }}
+      MC_VERSION: ${{ inputs.mc_version }}
+      BUILD_TASK: ${{ inputs.build_task }}
+      ARTIFACT_PATH: ${{ inputs.artifact_path }}
+      FORGE_BUILD: ${{ inputs.forge_build }}
+      REQUESTED_BUILD_JAVA: ${{ inputs.build_java }}
+      REQUESTED_SERVER_JAVA: ${{ inputs.server_java }}
+      EXPECTED_ID: ${{ inputs.expected_id }}
+      STARTUP_TIMEOUT: ${{ inputs.startup_timeout }}
+    steps:
+      - name: Install runner utilities
+        run: |
+          set -eu
+          apt-get update
+          apt-get install -y --no-install-recommends git curl ca-certificates python3 unzip util-linux
+      - uses: https://data.forgejo.org/actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1
+        with:
+          persist-credentials: false
+      - name: Validate parameters and select Java versions
+        shell: bash
+        run: |
+          set -euo pipefail
+          python3 tools/select_ci.py
+      - name: Set up independent compiler JDK
+        id: compiler-jdk
+        if: env.COMPILER_JAVA != env.BUILD_JAVA
+        uses: https://data.forgejo.org/actions/setup-java@d1374f8ac74474200d16ef8ecee22c7ae7a51880
+        with:
+          distribution: temurin
+          java-version: ${{ env.COMPILER_JAVA }}
+      - name: Set up build JDK
+        id: build-jdk
+        uses: https://data.forgejo.org/actions/setup-java@d1374f8ac74474200d16ef8ecee22c7ae7a51880
+        with:
+          distribution: temurin
+          java-version: ${{ env.BUILD_JAVA }}
+      - name: Compile selected project
+        shell: bash
+        run: |
+          set -euo pipefail
+          bash "$BUILD_LAUNCHER" -p "$BUILD_DIRECTORY" "$BUILD_TASK" -PtargetId="$TARGET_ID" --no-daemon
+          if [[ -n "$TARGET_ID" ]]; then
+            bash "$BUILD_LAUNCHER" -p "$BUILD_DIRECTORY" runtimeTestJar -PtargetId="$TARGET_ID" --no-daemon
+          fi
+          if [[ -n "$TARGET_ID" ]]; then
+            mkdir -p build/test-client
+            cp tests/client/package*.json build/test-client/
+            npm ci --prefix build/test-client --no-audit --no-fund
+            python3 tools/check_artifact.py --target "$TARGET_ID"
+          fi
+      - name: Select and inspect distributable
+        shell: bash
+        run: |
+          set -euo pipefail
+          mkdir -p ci-distribution mc-test-logs
+          python3 - <<'PY'
+          import glob, hashlib, json, os, pathlib, re, shutil, sys, zipfile
+          kind = os.environ['SERVER_TYPE']
+          explicit = os.environ['ARTIFACT_PATH'].strip()
+          paths = [pathlib.Path(explicit)] if explicit else [pathlib.Path(p) for p in glob.glob('**/build/libs/*.jar', recursive=True)]
+          paths = [p for p in paths if p.is_file() and not p.is_symlink() and not re.search(r'-(?:sources|javadoc|tests)\.jar$', p.name)]
+          candidates = []
+          for p in paths:
+              with zipfile.ZipFile(p) as z:
+                  names = set(z.namelist())
+                  if kind in ('paper', 'spigot'):
+                      if 'plugin.yml' not in names: continue
+                      text = z.read('plugin.yml').decode('utf-8', 'replace')
+                      match = re.search(r'^name:\s*["\']?([^"\'\r\n#]+)', text, re.M)
+                      identity = match.group(1).strip() if match else ''
+                  else:
+                      metadata = next((n for n in ('META-INF/mods.toml', 'mcmod.info') if n in names), None)
+                      if not metadata: continue
+                      text = z.read(metadata).decode('utf-8', 'replace')
+                      match = re.search(r'\bmodId\s*=\s*["\']([^"\']+)', text) or re.search(r'["\']modid["\']\s*:\s*["\']([^"\']+)', text)
+                      identity = match.group(1) if match else ''
+                  candidates.append((p, identity))
+          if len(candidates) != 1:
+              print(f'Expected exactly one {kind} artifact, found {len(candidates)}: {candidates}', file=sys.stderr)
+              print('Set artifact_path to the correct version-specific JAR, or build a single selected target.', file=sys.stderr)
+              sys.exit(1)
+          path, found_id = candidates[0]
+          expected = os.environ['EXPECTED_ID'].strip() or found_id
+          if expected != found_id: sys.exit('Declared artifact identity does not match expected_id')
+          if not expected or not re.fullmatch(r'[A-Za-z0-9_.-]+', expected):
+              sys.exit('Cannot determine plugin name/mod ID: set expected_id')
+          shutil.copy2(path, pathlib.Path('ci-distribution') / path.name)
+          pathlib.Path('mc-test-identity.txt').write_text(expected)
+          spec_path = pathlib.Path('build/ci-target.json')
+          spec = json.loads(spec_path.read_text())
+          spec['expectedId'] = expected
+          spec_path.write_text(json.dumps(spec, indent=2) + '\n')
+          receipt = pathlib.Path('build/validation') / (spec['id'] + '-compiled.json')
+          receipt.parent.mkdir(parents=True, exist_ok=True)
+          if not receipt.exists():
+              receipt.write_text(json.dumps(dict(target=spec['id'], state='compiled', compiled=True, artifact=path.name,
+                                                 sha256=hashlib.sha256(path.read_bytes()).hexdigest()), indent=2) + '\n')
+          print(f'Artifact: {path} | declared {kind} identity: {found_id!r} | expecting: {expected!r}')
+          PY
+      - name: Set up Minecraft server JDK
+        id: server-jdk
+        uses: https://data.forgejo.org/actions/setup-java@d1374f8ac74474200d16ef8ecee22c7ae7a51880
+        with:
+          distribution: temurin
+          java-version: ${{ env.SERVER_JAVA }}
+      - name: Install exact native server
+        shell: bash
+        run: |
+          set -euo pipefail
+          python3 tests/install_server.py --spec build/ci-target.json --java "$JAVA_HOME/bin/java"
+      - name: Exercise installed distribution
+        shell: bash
+        run: |
+          set -euo pipefail
+          if [[ -n "$TARGET_ID" ]]; then
+            python3 tests/run_paper.py --target "$TARGET_ID" --artifact "$ARTIFACT_PATH" --forge-build "$FORGE_BUILD" --startup-timeout "$STARTUP_TIMEOUT" --java "$JAVA_HOME/bin/java"
+          else
+            python3 tests/startup.py --spec build/ci-target.json --artifact "$ARTIFACT_PATH" --timeout "$STARTUP_TIMEOUT" --java "$JAVA_HOME/bin/java"
+          fi
+      - name: Record incomplete stage
+        if: always()
+        env:
+          TOOLCHAIN_OUTCOME: ${{ (steps.compiler-jdk.outcome == 'failure' || steps.build-jdk.outcome == 'failure' || steps.server-jdk.outcome == 'failure') && 'failure' || 'success' }}
+        run: python3 tools/ci_result.py
+      - name: Upload server and probe logs
+        if: always()
+        uses: https://data.forgejo.org/actions/upload-artifact@ff15f0306b3f739f7b6fd43fb5d26cd321bd4de5
+        with:
+          name: minecraft-server-logs
+          path: |
+            mc-test-logs/
+            mc-test-server/crash-reports/
+            build/runtime/**/installer.log
+            build/runtime/**/installation.json
+            build/runtime/**/console.log
+            build/runtime/**/client.log
+            build/runtime/**/shutdown-threads.txt
+            build/runtime/**/run-inputs/**
+            build/runtime/**/result.json
+            build/runtime/**/crash-reports/
+          if-no-files-found: warn
+

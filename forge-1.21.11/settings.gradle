@@ -1,0 +1,13 @@
+pluginManagement {
+    resolutionStrategy.eachPlugin {
+        if (requested.id.id == 'net.minecraftforge.gradle') {
+            def manifest = new groovy.json.JsonSlurper().parse(file('../versions.json'))
+            def targetId = providers.gradleProperty('targetId').getOrElse('forge-1.21.11')
+            def target = manifest.artifacts.find { it.id == targetId }
+            useVersion(target?.forgeGradle ?: '7.0.3')
+        }
+    }
+}
+
+plugins { id 'org.gradle.toolchains.foojay-resolver-convention' version '1.0.0' }
+rootProject.name = 'DropsOverhaul-Forge-1.21.11'

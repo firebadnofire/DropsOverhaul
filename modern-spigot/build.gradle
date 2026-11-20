@@ -1,0 +1,40 @@
+plugins { id 'java' }
+
+def manifest = new groovy.json.JsonSlurper().parse(file('../versions.json'))
+def target = manifest.artifacts.find { it.id == 'spigot-1.19' }
+group = 'org.infotoast'
+version = manifest.projectVersion
+repositories {
+    mavenCentral()
+    maven { url = 'https://hub.spigotmc.org/nexus/content/repositories/public/' }
+}
+dependencies { compileOnly "org.spigotmc:spigot-api:${target.minecraft}-R0.1-SNAPSHOT" }
+java { toolchain.languageVersion = JavaLanguageVersion.of(target.compilerJava) }
+sourceSets.main {
+    java.srcDirs = ['../src/main/java', '../common/src/main/java']
+    resources.srcDir '../src/main/resources'
+}
+processResources {
+    filesMatching('plugin.yml') {
+        expand(version: project.version)
+        filter { line -> line.startsWith('api-version:') ? 'api-version: 1.19' : line }
+    }
+}
+jar { archiveFileName = target.artifact.replace('{version}', project.version.toString()) }
+sourceSets {
+    runtimeTest {
+        java.srcDir '../tests/paper/src'
+        resources.srcDir '../tests/paper/resources'
+        compileClasspath += sourceSets.main.output + configurations.compileClasspath
+    }
+}
+processRuntimeTestResources {
+    filesMatching('plugin.yml') {
+        filter { line -> line.startsWith('api-version:') ? 'api-version: 1.19' : line }
+    }
+}
+tasks.register('runtimeTestJar', Jar) {
+    archiveFileName = 'DropsOverhaul-runtime-tests.jar'
+    destinationDirectory = layout.buildDirectory.dir('test-fixtures')
+    from sourceSets.runtimeTest.output
+}
