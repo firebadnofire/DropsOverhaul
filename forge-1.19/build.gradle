@@ -11,7 +11,17 @@ group = 'org.infotoast'
 version = manifest.projectVersion
 java.toolchain.languageVersion = JavaLanguageVersion.of(target.buildJava)
 minecraft { mappings channel: 'official', version: target.minecraft }
-repositories { mavenCentral() }
+repositories {
+    // ForgeGradle 5 resolves MCP libraries through its own ordered downloader.
+    // Resolve Mojang artifacts at their origin before consulting Forge's mirror.
+    maven {
+        name = 'MojangLibraries'
+        url = 'https://libraries.minecraft.net/'
+        content { includeGroup 'com.mojang' }
+        metadataSources { mavenPom(); artifact() }
+    }
+    mavenCentral()
+}
 configurations {
     bundled
     implementation.extendsFrom bundled
